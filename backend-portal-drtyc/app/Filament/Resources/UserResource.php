@@ -7,6 +7,7 @@ use App\Models\User;
 use BackedEnum;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Schemas;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -26,6 +27,26 @@ class UserResource extends Resource
     protected static ?string $modelLabel = 'Usuario';
 
     protected static ?string $pluralModelLabel = 'Usuarios';
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->hasAnyRole(['super_admin']) || auth()->user()->hasPermissionTo('view_any_user');
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->hasPermissionTo('create_user');
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()->hasPermissionTo('update_user');
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()->hasPermissionTo('delete_user');
+    }
 
     public static function form(Schema $schema): Schema
     {

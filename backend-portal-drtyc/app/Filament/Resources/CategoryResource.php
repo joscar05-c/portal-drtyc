@@ -7,6 +7,7 @@ use App\Models\Category;
 use BackedEnum;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Schemas;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -26,6 +27,26 @@ class CategoryResource extends Resource
     protected static ?string $modelLabel = 'Categoría';
 
     protected static ?string $pluralModelLabel = 'Categorías';
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->hasAnyRole(['super_admin', 'editor']) || auth()->user()->hasPermissionTo('view_any_category');
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->hasPermissionTo('create_category');
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()->hasPermissionTo('update_category');
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()->hasPermissionTo('delete_category');
+    }
 
     public static function form(Schema $schema): Schema
     {

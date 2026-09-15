@@ -8,6 +8,7 @@ use App\Models\Post;
 use BackedEnum;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Schemas;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -27,6 +28,26 @@ class PostResource extends Resource
     protected static ?string $modelLabel = 'Publicación';
 
     protected static ?string $pluralModelLabel = 'Publicaciones';
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->hasAnyRole(['super_admin', 'editor']) || auth()->user()->hasPermissionTo('view_any_post');
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->hasPermissionTo('create_post');
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()->hasPermissionTo('update_post');
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()->hasPermissionTo('delete_post');
+    }
 
     public static function form(Schema $schema): Schema
     {
