@@ -1,0 +1,32 @@
+<?php
+
+use App\Http\Controllers\Api\BannerController;
+use App\Http\Controllers\Api\ComplaintController;
+use App\Http\Controllers\Api\DocumentController;
+use App\Http\Controllers\Api\FaqController;
+use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\SettingController;
+use App\Http\Controllers\Api\StaffController;
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('v1')->group(function () {
+
+    Route::get('/posts', [PostController::class, 'index']);
+    Route::get('/posts/{slug}', [PostController::class, 'show']);
+
+    Route::get('/documents', [DocumentController::class, 'index']);
+
+    Route::get('/projects', [ProjectController::class, 'index']);
+
+    Route::get('/banners', [BannerController::class, 'index']);
+
+    Route::get('/staff', [StaffController::class, 'index']);
+
+    Route::get('/faqs', [FaqController::class, 'index']);
+
+    Route::get('/settings', [SettingController::class, 'index']);
+
+    Route::post('/complaints', [ComplaintController::class, 'store']);
+
+});
