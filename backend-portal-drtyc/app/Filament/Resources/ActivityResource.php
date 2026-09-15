@@ -32,6 +32,11 @@ class ActivityResource extends Resource
 
     protected static ?int $navigationSort = 99;
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->hasRole('super_admin');
+    }
+
     public static function canCreate(): bool
     {
         return false;
