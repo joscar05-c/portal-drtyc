@@ -1,0 +1,101 @@
+<!-- Hero Section -->
+<section class="bg-white dark:bg-gray-900">
+  <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
+    <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
+      Dirección Regional de Transportes y Comunicaciones
+    </h1>
+    <p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
+      Servicios de transporte y comunicaciones para la región. Consulta de trámites, resoluciones y convocatorias.
+    </p>
+    <div class="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0">
+      <a routerLink="/tramites"
+         class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+        Trámites en Línea
+        <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+        </svg>
+      </a>
+      <a routerLink="/resoluciones"
+         class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-gray-900 rounded-lg border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
+        Ver Resoluciones
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Accesos Rápidos -->
+<section class="bg-gray-50 dark:bg-gray-800">
+  <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      @for (acceso of accesosRapidos; track acceso.titulo) {
+        <a [routerLink]="acceso.ruta"
+           class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+          <div class="flex items-center mb-3">
+            <div [class]="'w-10 h-10 rounded-lg flex items-center justify-center mr-3 ' + acceso.color">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="acceso.icono"/>
+              </svg>
+            </div>
+            <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ acceso.titulo }}</h5>
+          </div>
+          <p class="font-normal text-gray-700 dark:text-gray-400">{{ acceso.descripcion }}</p>
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Noticias Recientes -->
+<section class="bg-white dark:bg-gray-900">
+  <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16">
+    <div class="mx-auto max-w-screen-sm text-center lg:mb-16 mb-8">
+      <h2 class="mb-4 text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">Noticias Recientes</h2>
+      <p class="font-light text-gray-500 sm:text-xl dark:text-gray-400">Últimas novedades de la DRTC</p>
+    </div>
+
+    @if (cargando()) {
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        @for (i of [1, 2, 3]; track i) {
+          <article class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 animate-pulse">
+            <div class="flex items-center mb-5">
+              <div class="h-2.5 bg-gray-200 rounded-full w-24 me-3"></div>
+            </div>
+            <div class="h-2.5 bg-gray-200 rounded-full w-3/4 mb-3"></div>
+            <div class="h-2 bg-gray-200 rounded-full mb-2.5"></div>
+            <div class="h-2 bg-gray-200 rounded-full mb-2.5"></div>
+            <div class="h-2 bg-gray-200 rounded-full w-2/3"></div>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        @for (noticia of noticias(); track noticia.id) {
+          <article class="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+            <div class="flex justify-between items-center mb-5 text-gray-500">
+              <span class="bg-blue-100 text-blue-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800">
+                <svg class="w-3 h-3 me-1.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M0 4a2 2 0 012-2h16a2 2 0 012 2v8a2 2 0 01-2 2H6.5l-5 5V4z" clip-rule="evenodd"/>
+                </svg>
+                Noticia
+              </span>
+              <span class="text-sm">{{ noticia.fecha }}</span>
+            </div>
+            <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              <a href="#">{{ noticia.titulo }}</a>
+            </h2>
+            <p class="mb-5 font-light text-gray-500 dark:text-gray-400 line-clamp-3">{{ noticia.resumen }}</p>
+            <div class="flex justify-between items-center">
+              <a [routerLink]="['/noticias', noticia.slug]"
+                 class="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                Leer más
+                <svg class="w-4 h-4 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                </svg>
+              </a>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>
