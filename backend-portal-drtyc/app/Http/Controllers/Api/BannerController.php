@@ -12,7 +12,16 @@ class BannerController extends Controller
         $banners = Banner::query()
             ->where('is_active', true)
             ->orderBy('sort_order')
-            ->get(['id', 'title', 'image_path', 'url']);
+            ->get([
+                'id',
+                'title',
+                'badge',
+                'description',
+                'button_text',
+                'button_icon',
+                'image_path',
+                'url',
+            ]);
 
         return response()->json($banners);
     }

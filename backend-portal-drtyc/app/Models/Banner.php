@@ -14,6 +14,10 @@ class Banner extends Model
 
     protected $fillable = [
         'title',
+        'badge',
+        'description',
+        'button_text',
+        'button_icon',
         'image_path',
         'url',
         'sort_order',
@@ -31,7 +35,7 @@ class Banner extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['title', 'image_path', 'url', 'sort_order', 'is_active'])
+            ->logOnly(['title', 'badge', 'description', 'button_text', 'button_icon', 'image_path', 'url', 'sort_order', 'is_active'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
     }
