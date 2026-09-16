@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\BannerController;
 use App\Http\Controllers\Api\ComplaintController;
 use App\Http\Controllers\Api\DocumentController;
 use App\Http\Controllers\Api\FaqController;
+use App\Http\Controllers\Api\JobPostingController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\SettingController;
@@ -18,6 +19,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/documents', [DocumentController::class, 'index']);
 
     Route::get('/projects', [ProjectController::class, 'index']);
+
+    Route::get('/job-postings', [JobPostingController::class, 'index']);
 
     Route::get('/banners', [BannerController::class, 'index']);
 
