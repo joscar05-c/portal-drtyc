@@ -19,7 +19,23 @@ export const routes: Routes = [
         loadComponent: () => import('./features/convocatorias/convocatorias.component').then(m => m.ConvocatoriasComponent)
       },
       {
-        path: 'transparencia',
+        path: 'noticias/:slug',
+        loadComponent: () => import('./features/inicio/inicio.component').then(m => m.InicioComponent)
+      },
+      {
+        path: 'directorio',
+        loadComponent: () => import('./features/inicio/inicio.component').then(m => m.InicioComponent)
+      },
+      {
+        path: 'preguntas-frecuentes',
+        loadComponent: () => import('./features/inicio/inicio.component').then(m => m.InicioComponent)
+      },
+      {
+        path: 'obras-viales',
+        loadComponent: () => import('./features/inicio/inicio.component').then(m => m.InicioComponent)
+      },
+      {
+        path: 'reclamos',
         loadComponent: () => import('./features/inicio/inicio.component').then(m => m.InicioComponent)
       }
     ]

@@ -1,24 +1,25 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 import { PortalService } from '../../core/services/portal.service';
-import { Resolucion } from '../../core/interfaces/resolucion.model';
+import { DocumentItem } from '../../core/interfaces/document.model';
 
 @Component({
   selector: 'app-resoluciones',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, DatePipe],
   templateUrl: './resoluciones.component.html',
 })
 export class ResolucionesComponent implements OnInit {
   private portalService = inject(PortalService);
 
-  resoluciones = signal<Resolucion[]>([]);
+  resoluciones = signal<DocumentItem[]>([]);
   cargando = signal(true);
   terminoBusqueda = signal('');
   anioSeleccionado = signal<number | null>(null);
 
   anios = computed(() => {
-    const aniosUnicos = [...new Set(this.resoluciones().map(r => r.anio))];
+    const aniosUnicos = [...new Set(this.resoluciones().map(r => r.year))];
     return aniosUnicos.sort((a, b) => b - a);
   });
 
@@ -28,13 +29,13 @@ export class ResolucionesComponent implements OnInit {
     const anio = this.anioSeleccionado();
 
     if (anio) {
-      resultado = resultado.filter(r => r.anio === anio);
+      resultado = resultado.filter(r => r.year === anio);
     }
 
     if (busqueda) {
       resultado = resultado.filter(r =>
-        r.numero.toLowerCase().includes(busqueda) ||
-        r.descripcion.toLowerCase().includes(busqueda)
+        r.document_number.toLowerCase().includes(busqueda) ||
+        r.title.toLowerCase().includes(busqueda)
       );
     }
 
@@ -42,9 +43,9 @@ export class ResolucionesComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.portalService.getResoluciones().subscribe({
-      next: (data) => {
-        this.resoluciones.set(data);
+    this.portalService.getDocuments().subscribe({
+      next: (res) => {
+        this.resoluciones.set(res.data);
         this.cargando.set(false);
       },
       error: () => this.cargando.set(false)
@@ -61,6 +62,6 @@ export class ResolucionesComponent implements OnInit {
   }
 
   descargarPdf(url: string): void {
-    window.open(url, '_blank');
+    window.open('http://127.0.0.1:8000/storage/' + url, '_blank');
   }
 }

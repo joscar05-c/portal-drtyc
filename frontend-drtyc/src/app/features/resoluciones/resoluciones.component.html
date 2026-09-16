@@ -1,28 +1,28 @@
-<div class="max-w-screen-xl px-4 mx-auto lg:px-6">
+<div class="max-w-7xl mx-auto px-gutter py-space-xl">
   <!-- Encabezado -->
-  <div class="mb-8">
-    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Resoluciones</h1>
-    <p class="text-gray-500 dark:text-gray-400 mt-2">Consulta las resoluciones administrativas de la DRTC</p>
+  <div class="mb-space-xl">
+    <div class="flex items-center gap-space-xs text-secondary text-label-md uppercase tracking-wider mb-1">
+      <span class="material-symbols-outlined text-[18px]">policy</span>
+      <span>Marco Legal y Transparencia</span>
+    </div>
+    <h1 class="text-headline-xl text-primary font-bold">Resoluciones</h1>
+    <p class="text-body-md text-on-surface-variant mt-2">Consulta las resoluciones administrativas de la DRTC</p>
   </div>
 
   <!-- Filtros -->
-  <div class="mb-4 border border-gray-200 dark:border-gray-700 rounded-lg p-4 md:p-6">
-    <div class="flex flex-col md:flex-row gap-4">
+  <div class="mb-space-lg border border-outline-variant rounded-xl p-space-md md:p-space-lg bg-surface-container-lowest">
+    <div class="flex flex-col md:flex-row gap-space-md">
       <!-- Buscador -->
       <div class="flex-1">
         <label for="buscador" class="sr-only">Buscar</label>
         <div class="relative">
-          <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-            </svg>
-          </div>
+          <span class="material-symbols-outlined absolute left-3 top-3 text-outline text-[20px]">search</span>
           <input id="buscador"
                  type="text"
-                 placeholder="Buscar por número o descripción..."
+                 placeholder="Buscar por número o título..."
                  [value]="terminoBusqueda()"
                  (input)="onBuscar($event)"
-                 class="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                 class="w-full h-11 pl-10 pr-space-md rounded bg-surface-container-low text-on-surface text-body-sm focus:outline-none focus:ring-2 focus:ring-secondary transition-all" />
         </div>
       </div>
 
@@ -31,8 +31,8 @@
         <label for="filtro-anio" class="sr-only">Filtrar por año</label>
         <select id="filtro-anio"
                 (change)="onFiltrarAnio($any($event.target).value ? +$any($event.target).value : null)"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option [value]="''">Todos los años</option>
+                class="w-full h-11 px-space-md rounded bg-surface-container-low text-on-surface text-body-sm focus:outline-none focus:ring-2 focus:ring-secondary">
+          <option value="">Todos los años</option>
           @for (anio of anios(); track anio) {
             <option [value]="anio">{{ anio }}</option>
           }
@@ -43,59 +43,55 @@
 
   <!-- Resultados -->
   @if (cargando()) {
-    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-8">
-      <div class="space-y-4">
+    <div class="border border-outline-variant rounded-xl p-space-lg bg-surface-container-lowest">
+      <div class="space-y-space-md">
         @for (i of [1, 2, 3, 4, 5]; track i) {
-          <div class="animate-pulse flex space-x-4 p-4 border border-gray-100 rounded-lg dark:border-gray-700">
-            <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-1/4"></div>
-            <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-1/2"></div>
-            <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-1/6"></div>
+          <div class="animate-pulse flex gap-space-md p-space-md border border-outline-variant/50 rounded-lg">
+            <div class="h-4 bg-surface-container-high rounded w-1/4"></div>
+            <div class="h-4 bg-surface-container-high rounded w-1/3"></div>
+            <div class="h-4 bg-surface-container-high rounded w-1/6"></div>
           </div>
         }
       </div>
     </div>
   } @else {
     <!-- Tabla desktop -->
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg hidden md:block">
-      <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-          <tr>
-            <th scope="col" class="px-6 py-3">Número</th>
-            <th scope="col" class="px-6 py-3">Descripción</th>
-            <th scope="col" class="px-6 py-3">Fecha</th>
-            <th scope="col" class="px-6 py-3 text-right">PDF</th>
+    <div class="relative overflow-x-auto shadow-md rounded-xl hidden md:block bg-surface-container-lowest">
+      <table class="w-full text-left text-body-sm">
+        <thead>
+          <tr class="bg-surface-container text-on-surface-variant text-label-md uppercase tracking-wider">
+            <th class="py-space-md px-space-md rounded-l">Número</th>
+            <th class="py-space-md px-space-md">Título</th>
+            <th class="py-space-md px-space-md">Fecha</th>
+            <th class="py-space-md px-space-md text-right rounded-r">PDF</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="text-on-surface">
           @for (resolucion of resolucionesFiltradas(); track resolucion.id) {
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                {{ resolucion.numero }}
+            <tr class="hover:bg-surface-container-low transition-colors border-b border-outline-variant/50">
+              <td class="py-space-md px-space-md font-semibold text-primary whitespace-nowrap">
+                {{ resolucion.document_number }}
               </td>
-              <td class="px-6 py-4">
-                {{ resolucion.descripcion }}
+              <td class="py-space-md px-space-md">
+                {{ resolucion.title }}
               </td>
-              <td class="px-6 py-4">
-                {{ resolucion.fecha_publicacion }}
+              <td class="py-space-md px-space-md text-on-surface-variant whitespace-nowrap">
+                {{ resolucion.created_at | date:'dd/MM/yyyy' }}
               </td>
-              <td class="px-6 py-4 text-right">
-                <button (click)="descargarPdf(resolucion.archivo_pdf_url)"
-                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                  <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                  </svg>
+              <td class="py-space-md px-space-md text-right">
+                <button (click)="descargarPdf(resolucion.file_path)"
+                        class="inline-flex items-center gap-1.5 px-space-md py-1.5 rounded bg-primary text-on-primary hover:bg-primary-container text-label-sm font-semibold transition-colors shadow-sm">
+                  <span class="material-symbols-outlined text-[16px]">picture_as_pdf</span>
                   PDF
                 </button>
               </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="4" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                <svg class="w-12 h-12 mx-auto text-gray-300 dark:text-gray-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <p class="text-lg font-medium">No se encontraron resultados</p>
-                <p class="text-sm mt-1">Intenta con otros términos de búsqueda</p>
+              <td colspan="4" class="py-space-xl px-space-md text-center text-on-surface-variant">
+                <span class="material-symbols-outlined text-[48px] text-outline mb-space-sm block">search_off</span>
+                <p class="text-headline-sm font-bold">No se encontraron resultados</p>
+                <p class="text-body-sm mt-1">Intenta con otros términos de búsqueda</p>
               </td>
             </tr>
           }
@@ -104,32 +100,31 @@
     </div>
 
     <!-- Cards móvil -->
-    <div class="md:hidden space-y-4">
+    <div class="md:hidden space-y-space-md">
       @for (resolucion of resolucionesFiltradas(); track resolucion.id) {
-        <div class="p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-          <div class="flex items-start justify-between mb-3">
-            <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">{{ resolucion.numero }}</span>
-            <span class="text-xs text-gray-400 dark:text-gray-500">{{ resolucion.fecha_publicacion }}</span>
+        <div class="p-space-md bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm">
+          <div class="flex items-start justify-between mb-space-sm">
+            <span class="text-label-md font-semibold text-secondary">{{ resolucion.document_number }}</span>
+            <span class="text-label-sm text-outline">{{ resolucion.created_at | date:'dd/MM/yyyy' }}</span>
           </div>
-          <p class="text-sm text-gray-700 dark:text-gray-400 mb-4">{{ resolucion.descripcion }}</p>
-          <button (click)="descargarPdf(resolucion.archivo_pdf_url)"
-                  class="w-full inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
+          <p class="text-body-sm text-on-surface-variant mb-space-md">{{ resolucion.title }}</p>
+          <button (click)="descargarPdf(resolucion.file_path)"
+                  class="w-full inline-flex items-center justify-center gap-space-xs px-space-md py-2 text-label-md font-semibold text-on-primary bg-primary rounded hover:bg-primary-container transition-colors">
+            <span class="material-symbols-outlined text-[16px]">picture_as_pdf</span>
             Descargar PDF
           </button>
         </div>
       } @empty {
-        <div class="p-8 text-center text-gray-500 dark:text-gray-400 bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700">
-          <p>No se encontraron resultados</p>
+        <div class="p-space-lg text-center text-on-surface-variant bg-surface-container-lowest border border-outline-variant rounded-xl">
+          <span class="material-symbols-outlined text-[48px] text-outline mb-space-sm block">search_off</span>
+          <p class="text-headline-sm font-bold">No se encontraron resultados</p>
         </div>
       }
     </div>
 
     <!-- Contador -->
-    <div class="mt-4 text-sm text-gray-500 dark:text-gray-400 text-right">
-      Mostrando {{ resolucionesFiltradas().length }} de {{ resoluciones().length }} resoluciones
+    <div class="mt-space-md text-label-sm text-on-surface-variant text-right">
+      Mostrando <strong class="text-primary font-semibold">{{ resolucionesFiltradas().length }}</strong> de <strong class="text-primary font-semibold">{{ resoluciones().length }}</strong> resoluciones
     </div>
   }
 </div>
