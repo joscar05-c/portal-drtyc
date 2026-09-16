@@ -104,6 +104,7 @@ class ProjectResource extends Resource
                     ->schema([
                         Forms\Components\FileUpload::make('image_path')
                             ->label('Imagen de la Obra')
+                            ->disk('public')
                             ->image()
                             ->imageEditor()
                             ->directory('projects')
@@ -120,6 +121,7 @@ class ProjectResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image_path')
                     ->label('Imagen')
+                    ->disk('public')
                     ->circular(),
                 Tables\Columns\TextColumn::make('title')
                     ->label('Obra')

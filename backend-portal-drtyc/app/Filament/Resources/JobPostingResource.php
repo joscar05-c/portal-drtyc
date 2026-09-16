@@ -97,6 +97,7 @@ class JobPostingResource extends Resource
                     ->schema([
                         Forms\Components\FileUpload::make('bases_pdf_path')
                             ->label('Bases PDF')
+                            ->disk('public')
                             ->directory('job-postings')
                             ->maxSize(10240)
                             ->acceptedFileTypes(['application/pdf'])

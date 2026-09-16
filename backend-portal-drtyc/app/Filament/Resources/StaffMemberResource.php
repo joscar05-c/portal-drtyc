@@ -80,6 +80,7 @@ class StaffMemberResource extends Resource
                     ->schema([
                         Forms\Components\FileUpload::make('photo_path')
                             ->label('Foto')
+                            ->disk('public')
                             ->image()
                             ->imageEditor()
                             ->directory('staff')
@@ -103,6 +104,7 @@ class StaffMemberResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('photo_path')
                     ->label('Foto')
+                    ->disk('public')
                     ->circular(),
                 Tables\Columns\TextColumn::make('full_name')
                     ->label('Nombre')

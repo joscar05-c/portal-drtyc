@@ -92,6 +92,7 @@ class DocumentResource extends Resource
                 Section::make('Archivo')->schema([
                     Forms\Components\FileUpload::make('file_path')
                         ->label('Archivo PDF')
+                        ->disk('public')
                         ->directory('documents')
                         ->maxSize(10240)
                         ->acceptedFileTypes(['application/pdf'])

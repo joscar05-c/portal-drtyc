@@ -98,6 +98,7 @@ class PostResource extends Resource
                 Section::make('Imagen')->schema([
                     Forms\Components\FileUpload::make('image_path')
                         ->label('Imagen')
+                        ->disk('public')
                         ->image()
                         ->imageEditor()
                         ->directory('posts')
@@ -114,6 +115,7 @@ class PostResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image_path')
                     ->label('Imagen')
+                    ->disk('public')
                     ->circular()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('title')
