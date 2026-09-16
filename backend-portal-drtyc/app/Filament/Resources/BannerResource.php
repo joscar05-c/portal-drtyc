@@ -76,14 +76,67 @@ class BannerResource extends Resource
                             ->default(true),
                     ])->columns(2),
 
+                Section::make('Contenido de Texto')
+                    ->schema([
+                        Forms\Components\TextInput::make('badge')
+                            ->label('Badge')
+                            ->placeholder('Ej: COMUNICADO OFICIAL')
+                            ->maxLength(255),
+                        Forms\Components\Textarea::make('description')
+                            ->label('Descripción')
+                            ->rows(3)
+                            ->maxLength(1000)
+                            ->placeholder('Texto descriptivo que aparece debajo del título en el carrusel'),
+                    ])->columns(1),
+
+                Section::make('Acción del Botón')
+                    ->schema([
+                        Forms\Components\TextInput::make('button_text')
+                            ->label('Texto del Botón')
+                            ->placeholder('Ej: Ver más detalles')
+                            ->maxLength(255),
+                        Forms\Components\Select::make('button_icon')
+                            ->label('Icono del Botón')
+                            ->allowHtml()
+                            ->options([
+                                'arrow_forward' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">arrow_forward</span> <span>Flecha hacia adelante</span></div>',
+
+                                'download' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">download</span> <span>Descargar Archivo</span></div>',
+
+                                'pin_drop' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">pin_drop</span> <span>Ubicación / Mapa</span></div>',
+
+                                'app_registration' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">app_registration</span> <span>Trámite / Celular</span></div>',
+
+                                'engineering' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">engineering</span> <span>Obra / Ingeniería</span></div>',
+
+                                'cell_tower' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">cell_tower</span> <span>Telecomunicaciones</span></div>',
+
+                                'event_available' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">event_available</span> <span>Cita / Disponible</span></div>',
+
+                                'how_to_reg' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">how_to_reg</span> <span>Registro de Usuario</span></div>',
+
+                                'picture_as_pdf' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">picture_as_pdf</span> <span>Documento PDF</span></div>',
+
+                                'campaign' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">campaign</span> <span>Campaña / Megáfono</span></div>',
+
+                                'info' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">info</span> <span>Información</span></div>',
+
+                                'open_in_new' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">open_in_new</span> <span>Abrir en nueva ventana</span></div>',
+                            ])
+                            ->placeholder('Seleccionar icono...')
+                            ->searchable()
+                            ->helperText('Nombre del icono Material Symbols'),
+                    ])->columns(2),
+
                 Section::make('Imagen')
                     ->schema([
                         Forms\Components\FileUpload::make('image_path')
                             ->label('Imagen del Banner')
+                            ->disk('public')
                             ->image()
                             ->imageEditor()
                             ->directory('banners')
-                            ->maxSize(5120)
+                            ->maxSize(20000)
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->required()
                             ->columnSpanFull(),
@@ -97,11 +150,16 @@ class BannerResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image_path')
                     ->label('Imagen')
+                    ->disk('public')
                     ->circular(),
                 Tables\Columns\TextColumn::make('title')
                     ->label('Título')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('badge')
+                    ->label('Badge')
+                    ->searchable()
+                    ->limit(20),
                 Tables\Columns\TextColumn::make('url')
                     ->label('URL')
                     ->limit(30)

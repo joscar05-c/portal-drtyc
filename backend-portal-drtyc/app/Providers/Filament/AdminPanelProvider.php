@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\HtmlString;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -32,6 +34,10 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Purple,
             ])
             ->sidebarCollapsibleOnDesktop()
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn(): HtmlString => new HtmlString('<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />')
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
