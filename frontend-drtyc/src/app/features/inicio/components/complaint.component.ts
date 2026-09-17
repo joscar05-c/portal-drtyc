@@ -1,12 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { PortalService } from '../../../core/services/portal.service';
 import { Complaint } from '../../../core/interfaces/complaint.model';
 
 @Component({
   selector: 'app-complaint',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   template: `
     <section class="w-full mb-space-xl" id="reclamos">
       <div class="bg-surface-container-lowest rounded-xl shadow-md p-space-lg md:p-space-xl">
@@ -17,9 +18,14 @@ import { Complaint } from '../../../core/interfaces/complaint.model';
             <span>Atención Ciudadana y Defensa de Derechos</span>
           </div>
           <h2 class="text-headline-lg text-primary font-bold mb-space-xs">Libro de Reclamaciones Virtual</h2>
-          <p class="text-body-sm text-on-surface-variant">
-            Conforme a lo establecido en el Código de Protección y Defensa del Consumidor (Ley N° 29571), esta entidad pone a su disposición este libro virtual para registrar su reclamo o queja formal.
+          <p class="text-body-sm text-on-surface-variant mb-space-md">
+            Conforme a lo establecido en el C&#243;digo de Protecci&#243;n y Defensa del Consumidor (Ley N&#170; 29571), esta entidad pone a su disposici&#243;n este libro virtual para registrar su reclamo o queja formal.
           </p>
+          <a routerLink="/seguimiento-reclamos"
+             class="inline-flex items-center gap-2 px-space-md py-space-sm border border-outline text-secondary font-label-lg rounded-full hover:bg-surface-container transition-colors">
+            <span class="material-symbols-outlined text-[20px]">manage_search</span>
+            <span>Consultar estado de mi reclamo</span>
+          </a>
         </div>
 
         @if (exito()) {
@@ -151,7 +157,7 @@ export class ComplaintComponent {
       next: (res) => {
         this.enviando.set(false);
         this.exito.set(true);
-        this.codigoSeguimiento.set(`REC-${new Date().getFullYear()}-${String(res.tracking_id).padStart(6, '0')}`);
+        this.codigoSeguimiento.set(res.tracking_code);
         this.formData = { document_number: '', full_name: '', email: '', phone: '', type: 'reclamo', details: '' };
       },
       error: (err) => {
