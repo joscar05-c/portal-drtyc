@@ -19,8 +19,12 @@ export const routes: Routes = [
         loadComponent: () => import('./features/convocatorias/convocatorias.component').then(m => m.ConvocatoriasComponent)
       },
       {
+        path: 'noticias',
+        loadComponent: () => import('./features/noticias/noticias.component').then(m => m.NoticiasComponent)
+      },
+      {
         path: 'noticias/:slug',
-        loadComponent: () => import('./features/inicio/inicio.component').then(m => m.InicioComponent)
+        loadComponent: () => import('./features/noticias/noticia-detalle.component').then(m => m.NoticiaDetalleComponent)
       },
       {
         path: 'directorio',

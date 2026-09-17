@@ -1,0 +1,98 @@
+import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { DatePipe, UpperCasePipe } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map, catchError, of, switchMap } from 'rxjs';
+import { PortalService } from '../../core/services/portal.service';
+import { Post } from '../../core/interfaces/post.model';
+import { environment } from '../../../environments/environment';
+
+@Component({
+  selector: 'app-noticia-detalle',
+  standalone: true,
+  imports: [RouterLink, DatePipe, UpperCasePipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    @if (noticia()) {
+      <article class="w-full max-w-4xl mx-auto px-gutter">
+        <nav class="flex items-center gap-2 text-label-sm text-outline mb-space-lg overflow-x-auto">
+          <a routerLink="/" class="hover:text-secondary transition-colors whitespace-nowrap">Inicio</a>
+          <span class="material-symbols-outlined text-[16px] flex-shrink-0">chevron_right</span>
+          <a routerLink="/noticias" class="hover:text-secondary transition-colors whitespace-nowrap">Noticias</a>
+          <span class="material-symbols-outlined text-[16px] flex-shrink-0">chevron_right</span>
+          <span class="text-on-surface truncate">{{ noticia()!.title }}</span>
+        </nav>
+
+        <header class="mb-space-lg">
+          <span class="inline-block px-space-md py-1 rounded-full text-label-sm font-bold bg-primary text-on-primary mb-space-sm">
+            {{ noticia()!.category ? (noticia()!.category!.name | uppercase) : 'NOTICIA' }}
+          </span>
+          <h1 class="font-headline-lg sm:text-headline-xl text-headline-xl text-primary font-bold mb-space-sm leading-tight">
+            {{ noticia()!.title }}
+          </h1>
+          <div class="flex items-center gap-space-md text-label-sm text-outline">
+            <div class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+              <span>{{ noticia()!.published_at | date:'dd MMMM yyyy':'':'es' }}</span>
+            </div>
+          </div>
+        </header>
+
+        @if (noticia()!.image_path) {
+          <div class="relative w-full aspect-video rounded-lg overflow-hidden mb-space-xl">
+            <img class="w-full h-full object-cover" [src]="getImageUrl(noticia()!.image_path!)" [alt]="noticia()!.title">
+          </div>
+        }
+
+        <div class="mb-space-xl">
+          @if (noticia()!.excerpt) {
+            <p class="text-body-lg text-on-surface-variant font-semibold mb-space-md leading-relaxed">
+              {{ noticia()!.excerpt }}
+            </p>
+          }
+          @if (noticia()!.content) {
+            <div class="text-body-md text-on-surface leading-relaxed space-y-4" [innerHTML]="noticia()!.content"></div>
+          }
+        </div>
+
+        <div class="pt-space-lg border-t border-outline-variant">
+          <a routerLink="/noticias" class="inline-flex items-center gap-2 text-label-lg text-secondary hover:underline font-bold">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+            <span>Volver a Noticias</span>
+          </a>
+        </div>
+      </article>
+    } @else {
+      <div class="w-full max-w-4xl mx-auto px-gutter p-12 text-center bg-surface-container-lowest rounded-lg shadow-sm">
+        <span class="material-symbols-outlined text-[48px] text-outline mb-space-md block">error</span>
+        <p class="text-headline-sm text-on-surface font-bold mb-1">Noticia no encontrada</p>
+        <p class="text-body-sm text-on-surface-variant mb-space-md">La noticia que buscas no existe o fue eliminada.</p>
+        <a routerLink="/noticias" class="inline-flex items-center gap-1 text-label-lg text-secondary hover:underline font-bold">
+          <span>Volver a Noticias</span>
+        </a>
+      </div>
+    }
+  `,
+})
+export class NoticiaDetalleComponent {
+  private route = inject(ActivatedRoute);
+  private portalService = inject(PortalService);
+  private apiUrl = environment.apiUrl.replace('/api/v1', '');
+
+  noticia = toSignal(
+    this.route.params.pipe(
+      map(params => params['slug']),
+      switchMap(slug => slug
+        ? this.portalService.getPostBySlug(slug).pipe(
+            catchError(() => of(null))
+          )
+        : of(null)
+      )
+    ),
+    { initialValue: null as Post | null }
+  );
+
+  getImageUrl(path: string): string {
+    return `${this.apiUrl}/storage/${path}`;
+  }
+}
