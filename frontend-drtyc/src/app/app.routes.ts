@@ -41,6 +41,10 @@ export const routes: Routes = [
       {
         path: 'reclamos',
         loadComponent: () => import('./features/inicio/inicio.component').then(m => m.InicioComponent)
+      },
+      {
+        path: 'seguimiento-reclamos',
+        loadComponent: () => import('./features/complaint/complaint-track.component').then(m => m.ComplaintTrackComponent)
       }
     ]
   }
