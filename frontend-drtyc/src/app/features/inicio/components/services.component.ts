@@ -32,7 +32,7 @@ import { QuickLink } from '../../../core/interfaces/quick-link.model';
               <div class="flex items-start justify-between gap-space-sm mb-space-md">
                 <div class="w-12 h-12 rounded flex items-center justify-center transition-colors"
                      [class]="getIconBg(tramite)">
-                  <span class="material-symbols-outlined text-[28px]">{{ tramite.icon }}</span>
+                  <span class="material-symbols-outlined text-[28px]">{{ tramite.icon || 'link' }}</span>
                 </div>
                 <span class="px-space-sm py-0.5 rounded text-label-sm font-label-sm font-bold"
                       [class]="getBadgeClass(tramite)">{{ tramite.badge_text }}</span>
@@ -45,11 +45,11 @@ import { QuickLink } from '../../../core/interfaces/quick-link.model';
               </p>
             </div>
             <div class="pt-space-sm flex items-center justify-between">
-              <span class="font-label-sm text-label-sm text-outline">{{ tramite.meta }}</span>
+              <span class="font-label-sm text-label-sm text-outline">{{ tramite.footer_info }}</span>
               <a class="font-label-md text-label-md text-secondary font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform"
                  [href]="tramite.url">
-                <span>{{ tramite.action_text }}</span>
-                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                <span>{{ tramite.button_text }}</span>
+                <span class="material-symbols-outlined text-[16px]">{{ tramite.button_icon || 'arrow_forward' }}</span>
               </a>
             </div>
           </div>
@@ -77,7 +77,7 @@ export class ServicesComponent implements OnInit {
     if (!q) return items;
     return items.filter(s =>
       s.title.toLowerCase().includes(q) ||
-      s.description.toLowerCase().includes(q)
+      (s.description && s.description.toLowerCase().includes(q))
     );
   });
 

@@ -67,10 +67,6 @@ class QuickLinkResource extends Resource
                             ->url()
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('icon_path')
-                            ->label('Icono (clase CSS)')
-                            ->maxLength(255)
-                            ->placeholder('ej: heroicon-o-home'),
                         Forms\Components\TextInput::make('sort_order')
                             ->label('Orden')
                             ->numeric()
@@ -80,6 +76,65 @@ class QuickLinkResource extends Resource
                             ->label('Activo')
                             ->default(true),
                     ])->columns(2),
+
+                Section::make('Contenido de la Tarjeta')
+                    ->schema([
+                        Forms\Components\Textarea::make('description')
+                            ->label('Descripción')
+                            ->rows(3)
+                            ->maxLength(500)
+                            ->placeholder('Texto descriptivo del trámite o servicio'),
+                        Forms\Components\TextInput::make('badge_text')
+                            ->label('Badge (Etiqueta)')
+                            ->placeholder('Ej: En Línea, Trámite Clave')
+                            ->maxLength(50),
+                        Forms\Components\Select::make('badge_color')
+                            ->label('Color del Badge')
+                            ->options([
+                                'secondary' => 'Secundario (Azul claro)',
+                                'primary' => 'Primario (Azul oscuro)',
+                                'surface' => 'Superficie (Gris)',
+                            ])
+                            ->default('secondary')
+                            ->required(),
+                    ])->columns(2),
+
+                Section::make('Icono y Acción')
+                    ->schema([
+                        Forms\Components\Select::make('icon')
+                            ->label('Icono del Trámite')
+                            ->allowHtml()
+                            ->options([
+                                'badge' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">badge</span> <span>badge (Licencia/Brevete)</span></div>',
+                                'mark_email_unread' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">mark_email_unread</span> <span>mark_email_unread (Mesa de Partes)</span></div>',
+                                'receipt_long' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">receipt_long</span> <span>receipt_long (Récord/Papeletas)</span></div>',
+                                'local_parking' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">local_parking</span> <span>local_parking (Depósito Vehicular)</span></div>',
+                                'local_shipping' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">local_shipping</span> <span>local_shipping (Transporte/Carga)</span></div>',
+                                'payments' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">payments</span> <span>payments (Pagos/Tasas)</span></div>',
+                            ])
+                            ->placeholder('Seleccionar icono...')
+                            ->searchable()
+                            ->helperText('Icono Material Symbols del trámite'),
+                        Forms\Components\TextInput::make('footer_info')
+                            ->label('Info inferior (meta)')
+                            ->placeholder('Ej: Plazo: Inmediato, Costo: Gratuito')
+                            ->maxLength(100),
+                        Forms\Components\TextInput::make('button_text')
+                            ->label('Texto del Botón')
+                            ->placeholder('Ej: Iniciar Consulta, Ver más')
+                            ->maxLength(100),
+                        Forms\Components\Select::make('button_icon')
+                            ->label('Icono del Botón')
+                            ->allowHtml()
+                            ->options([
+                                'arrow_forward' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">arrow_forward</span> <span>arrow_forward (Flecha continuar)</span></div>',
+                                'download' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">download</span> <span>download (Descargar)</span></div>',
+                                'open_in_new' => '<div class="flex items-center gap-2"><span class="material-symbols-outlined text-gray-500" style="font-family: \'Material Symbols Outlined\' !important;">open_in_new</span> <span>open_in_new (Enlace externo)</span></div>',
+                            ])
+                            ->placeholder('Seleccionar icono...')
+                            ->searchable()
+                            ->helperText('Icono de la acción del enlace'),
+                    ])->columns(3),
             ]);
     }
 

@@ -14,8 +14,15 @@ class QuickLink extends Model
 
     protected $fillable = [
         'title',
+        'description',
         'url',
+        'icon',
         'icon_path',
+        'badge_text',
+        'badge_color',
+        'footer_info',
+        'button_text',
+        'button_icon',
         'sort_order',
         'is_active',
     ];
@@ -31,7 +38,7 @@ class QuickLink extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['title', 'url', 'icon_path', 'sort_order', 'is_active'])
+            ->logOnly(['title', 'description', 'url', 'icon', 'icon_path', 'badge_text', 'badge_color', 'footer_info', 'button_text', 'button_icon', 'sort_order', 'is_active'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
     }
