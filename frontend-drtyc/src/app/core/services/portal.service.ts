@@ -9,7 +9,7 @@ import { Project } from '../interfaces/project.model';
 import { StaffMember } from '../interfaces/staff.model';
 import { Faq } from '../interfaces/faq.model';
 import { Settings } from '../interfaces/setting.model';
-import { Complaint, ComplaintResponse } from '../interfaces/complaint.model';
+import { Complaint, ComplaintResponse, ComplaintTrackRequest, ComplaintTrackResult } from '../interfaces/complaint.model';
 import { PaginatedResponse } from '../interfaces/pagination.model';
 import { JobPosting } from '../interfaces/job-posting.model';
 import { QuickLink } from '../interfaces/quick-link.model';
@@ -60,6 +60,10 @@ export class PortalService {
 
   sendComplaint(data: Complaint): Observable<ComplaintResponse> {
     return this.http.post<ComplaintResponse>(`${this.apiUrl}/complaints`, data);
+  }
+
+  trackComplaint(data: ComplaintTrackRequest): Observable<ComplaintTrackResult> {
+    return this.http.post<ComplaintTrackResult>(`${this.apiUrl}/complaints/track`, data);
   }
 
   getQuickLinks(): Observable<QuickLink[]> {
