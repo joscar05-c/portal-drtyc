@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\FaqController;
 use App\Http\Controllers\Api\JobPostingController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\QuickLinkController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\StaffController;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/job-postings', [JobPostingController::class, 'index']);
 
     Route::get('/banners', [BannerController::class, 'index']);
+
+    Route::get('/quick-links', [QuickLinkController::class, 'index']);
 
     Route::get('/staff', [StaffController::class, 'index']);
 
