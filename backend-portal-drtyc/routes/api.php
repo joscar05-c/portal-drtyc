@@ -14,27 +14,35 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
 
-    Route::get('/posts', [PostController::class, 'index']);
-    Route::get('/posts/{slug}', [PostController::class, 'show']);
+    // Lectura pública - Rate: 60 req/min por IP
+    Route::middleware('throttle:api-public')->group(function () {
+        Route::get('/posts', [PostController::class, 'index']);
+        Route::get('/posts/{slug}', [PostController::class, 'show']);
 
-    Route::get('/documents', [DocumentController::class, 'index']);
+        Route::get('/documents', [DocumentController::class, 'index']);
 
-    Route::get('/projects', [ProjectController::class, 'index']);
+        Route::get('/projects', [ProjectController::class, 'index']);
 
-    Route::get('/job-postings', [JobPostingController::class, 'index']);
+        Route::get('/job-postings', [JobPostingController::class, 'index']);
 
-    Route::get('/banners', [BannerController::class, 'index']);
+        Route::get('/banners', [BannerController::class, 'index']);
 
-    Route::get('/quick-links', [QuickLinkController::class, 'index']);
+        Route::get('/quick-links', [QuickLinkController::class, 'index']);
 
-    Route::get('/staff', [StaffController::class, 'index']);
+        Route::get('/staff', [StaffController::class, 'index']);
 
-    Route::get('/faqs', [FaqController::class, 'index']);
+        Route::get('/faqs', [FaqController::class, 'index']);
 
-    Route::get('/settings', [SettingController::class, 'index']);
+        Route::get('/settings', [SettingController::class, 'index']);
+    });
 
-    Route::post('/complaints', [ComplaintController::class, 'store']);
+    // Escritura pública - Rate más restrictivo
+    Route::middleware('throttle:api-complaints')->group(function () {
+        Route::post('/complaints', [ComplaintController::class, 'store']);
+    });
 
-    Route::post('/complaints/track', [ComplaintController::class, 'track']);
+    Route::middleware('throttle:api-track')->group(function () {
+        Route::post('/complaints/track', [ComplaintController::class, 'track']);
+    });
 
 });
