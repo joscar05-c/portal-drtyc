@@ -35,4 +35,6 @@ Route::prefix('v1')->group(function () {
 
     Route::post('/complaints', [ComplaintController::class, 'store']);
 
+    Route::post('/complaints/track', [ComplaintController::class, 'track']);
+
 });
