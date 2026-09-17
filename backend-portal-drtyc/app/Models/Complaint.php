@@ -13,6 +13,7 @@ class Complaint extends Model
     use HasFactory, SoftDeletes, LogsActivity;
 
     protected $fillable = [
+        'tracking_code',
         'document_number',
         'full_name',
         'email',
@@ -22,6 +23,20 @@ class Complaint extends Model
         'reply',
         'status',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Complaint $complaint) {
+            if (empty($complaint->tracking_code)) {
+                $complaint->tracking_code = 'REC-' . date('Y') . '-' . str_pad(
+                    Complaint::max('id') + 1,
+                    6,
+                    '0',
+                    STR_PAD_LEFT
+                );
+            }
+        });
+    }
 
     public function getActivitylogOptions(): LogOptions
     {
