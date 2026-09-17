@@ -14,6 +14,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
 class UserResource extends Resource
@@ -107,6 +108,30 @@ class UserResource extends Resource
             ->actions([
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
+                Actions\Action::make('cambiarPassword')
+                    ->label('Cambiar Contraseña')
+                    ->icon('heroicon-o-key')
+                    ->form([
+                        Forms\Components\TextInput::make('new_password')
+                            ->label('Nueva Contraseña')
+                            ->password()
+                            ->required()
+                            ->minLength(8)
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('new_password_confirmation')
+                            ->label('Confirmar Contraseña')
+                            ->password()
+                            ->required()
+                            ->same('new_password'),
+                    ])
+                    ->action(function (User $record, array $data): void {
+                        $record->update([
+                            'password' => Hash::make($data['new_password']),
+                        ]);
+                    })
+                    ->requiresConfirmation()
+                    ->modalHeading('Cambiar Contraseña')
+                    ->modalSubmitActionLabel('Cambiar'),
             ])
             ->bulkActions([
                 Actions\BulkActionGroup::make([
