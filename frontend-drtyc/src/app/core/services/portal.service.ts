@@ -12,6 +12,7 @@ import { Settings } from '../interfaces/setting.model';
 import { Complaint, ComplaintResponse } from '../interfaces/complaint.model';
 import { PaginatedResponse } from '../interfaces/pagination.model';
 import { JobPosting } from '../interfaces/job-posting.model';
+import { QuickLink } from '../interfaces/quick-link.model';
 
 @Injectable({ providedIn: 'root' })
 export class PortalService {
@@ -59,5 +60,9 @@ export class PortalService {
 
   sendComplaint(data: Complaint): Observable<ComplaintResponse> {
     return this.http.post<ComplaintResponse>(`${this.apiUrl}/complaints`, data);
+  }
+
+  getQuickLinks(): Observable<QuickLink[]> {
+    return this.http.get<QuickLink[]>(`${this.apiUrl}/quick-links`);
   }
 }
