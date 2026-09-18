@@ -1,17 +1,19 @@
 import { Component } from '@angular/core';
-import { HeroComponent } from './components/hero.component';
-import { ServicesComponent } from './components/services.component';
-import { NewsComponent } from './components/news.component';
-import { DocumentsComponent } from './components/documents.component';
-import { ProjectsComponent } from './components/projects.component';
-import { FaqComponent } from './components/faq.component';
-import { ComplaintComponent } from './components/complaint.component';
-import { StaffComponent } from './components/staff.component';
+import { CommonModule } from '@angular/common';
+import { HeroComponent } from './components/hero/hero.component';
+import { ServicesComponent } from './components/services/services.component';
+import { NewsComponent } from './components/news/news.component';
+import { DocumentsComponent } from './components/documents/documents.component';
+import { ProjectsComponent } from './components/projects/projects.component';
+import { FaqComponent } from './components/faq/faq.component';
+import { ComplaintComponent } from './components/complaint/complaint.component';
+import { StaffComponent } from './components/staff/staff.component';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
   imports: [
+    CommonModule,
     HeroComponent,
     ServicesComponent,
     NewsComponent,
@@ -21,17 +23,6 @@ import { StaffComponent } from './components/staff.component';
     ComplaintComponent,
     StaffComponent,
   ],
-  template: `
-    <div class="max-w-7xl mx-auto px-gutter py-space-xl">
-      <app-hero />
-      <app-services />
-      <app-news />
-      <app-documents />
-      <app-projects />
-      <app-faq />
-      <app-complaint />
-      <app-staff />
-    </div>
-  `,
+  templateUrl: './inicio.component.html',
 })
 export class InicioComponent {}
