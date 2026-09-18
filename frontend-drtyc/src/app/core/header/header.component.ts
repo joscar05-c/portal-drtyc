@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 
 @Component({
@@ -15,19 +15,15 @@ import { RouterLink, RouterLinkActive, Router } from '@angular/router';
           <div class="flex items-center gap-space-md">
             <span
               class="font-label-sm text-label-sm text-surface-variant flex items-center gap-space-xs"
-              ><span class="material-symbols-outlined text-[15px]">account_balance</span>Gobierno
-              Regional • Estado Peruano</span
-            ><a
-              class="hidden sm:inline-block font-label-sm text-label-sm text-surface-variant hover:text-on-primary underline-offset-2 hover:underline transition-colors"
-              href="#"
-              >Plataforma Digital del Estado Peruano</a
+              ><span class="material-symbols-outlined text-[15px]">account_balance</span><span class="hidden sm:inline">Dirección
+              Regional de Transportes y Comunicaciones</span><span class="sm:hidden">Dirección Regional de Transportes y Comunicaciones</span></span
             >
           </div>
           <div class="flex items-center gap-space-md">
-            <div class="flex items-center gap-space-xs">
+            <div class="hidden sm:flex items-center gap-space-xs">
               <button
                 class="h-6 px-space-xs text-on-primary hover:bg-primary-container rounded flex items-center justify-center font-label-sm text-label-sm"
-                title="Aumentar tamaño del texto"
+                title="Aumentar tama&#241;o del texto"
                 type="button"
               >
                 A+</button
@@ -42,35 +38,47 @@ import { RouterLink, RouterLinkActive, Router } from '@angular/router';
             <a
               class="bg-secondary hover:bg-on-secondary-fixed-variant text-on-secondary px-space-sm py-0.5 rounded font-label-sm text-label-sm tracking-wide transition-colors flex items-center gap-space-xs"
               href="#"
-              ><span class="material-symbols-outlined text-[14px]">visibility</span>Portal de
-              Transparencia Estándar</a
+              ><span class="material-symbols-outlined text-[14px]">visibility</span><span class="hidden sm:inline">Portal de Transparencia Est&#225;ndar</span><span class="sm:hidden">Transparencia</span></a
             >
           </div>
         </div>
       </div>
 
-      <!-- Middle Bar: Logo, Search, Actions -->
-      <div class="max-w-7xl mx-auto px-gutter h-20 flex items-center justify-between gap-space-lg">
-        <div class="flex items-center gap-space-md min-w-max">
+      <!-- Middle Bar: Logo + actions -->
+      <div class="max-w-7xl mx-auto px-gutter h-16 lg:h-20 flex items-center justify-between">
+        <div class="flex items-center gap-space-md">
           <img
             alt="Logotipo DRTC Institucional"
-            class="h-8 w-auto object-contain"
+            class="h-8 lg:h-9 w-auto object-contain"
             src="/img/LOGO DRTC-2026.png"
           />
           <div class="flex flex-col">
             <span
               class="font-headline-sm text-headline-sm text-primary tracking-tight leading-tight"
               >DRTC</span
-            ><span class="font-label-sm text-label-sm text-on-surface-variant leading-none"
-              >Dirección Regional de Transportes y Comunicaciones</span
+            ><span class="hidden sm:inline font-label-sm text-label-sm text-on-surface-variant leading-none"
+              >Direcci&#243;n Regional de Transportes y Comunicaciones</span
+            ><span class="sm:hidden font-label-sm text-label-sm text-on-surface-variant leading-none"
+              >Direcci&#243;n Regional</span
             >
           </div>
         </div>
-        <div class="hidden lg:flex flex-1 max-w-xl items-center">
-          <form class="w-full flex items-center relative" (submit)="$event.preventDefault()">
+        <!-- Mobile: perfil + hamburger, al borde derecho -->
+        <div class="flex items-center gap-space-xs lg:hidden">
+          <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center cursor-pointer">
+            <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+          </div>
+          <button (click)="menuAbierto.set(!menuAbierto())"
+                  class="w-10 h-10 rounded-lg bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center transition-colors cursor-pointer">
+            <span class="material-symbols-outlined text-primary text-[22px]">menu</span>
+          </button>
+        </div>
+        <!-- Desktop: search + mesa + perfil -->
+        <div class="hidden lg:flex items-center gap-space-md">
+          <form class="flex items-center relative" (submit)="$event.preventDefault()">
             <input
-              class="w-full h-11 pl-space-md pr-12 rounded-lg bg-surface-container-low text-on-surface placeholder:text-on-surface-variant/70 font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
-              placeholder="Buscar trámites, resoluciones, comunicados..."
+              class="w-80 h-11 pl-space-md pr-12 rounded-lg bg-surface-container-low text-on-surface placeholder:text-on-surface-variant/70 font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
+              placeholder="Buscar tr&#225;mites, resoluciones, comunicados..."
               type="search"
             /><button
               class="absolute right-1.5 w-8 h-8 rounded bg-primary text-on-primary flex items-center justify-center hover:bg-primary-container transition-colors"
@@ -80,87 +88,96 @@ import { RouterLink, RouterLinkActive, Router } from '@angular/router';
               <span class="material-symbols-outlined text-[18px]">search</span>
             </button>
           </form>
-        </div>
-        <div class="flex items-center gap-space-md">
           <a
+            routerLink="/mesa-de-partes"
             class="h-11 px-space-lg rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center gap-space-xs transition-colors shadow-sm"
-            href="#"
             ><span class="material-symbols-outlined text-[18px]">mark_email_unread</span
             ><span>Mesa de Partes Virtual</span></a
           >
-          <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+          <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center cursor-pointer">
             <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
           </div>
         </div>
       </div>
 
-      <!-- Bottom Nav Bar -->
-      <div class="bg-surface-container-lowest shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+      <!-- Bottom Nav: Desktop -->
+      <div class="bg-surface-container-lowest shadow-[0_1px_4px_rgba(0,0,0,0.03)] hidden lg:block">
         <div class="max-w-7xl mx-auto px-gutter">
-          <nav
-            class="flex items-center gap-space-xs overflow-x-auto py-1 h-12"
-          >
-            <a
-              routerLink="/"
-              routerLinkActive="bg-primary-container text-on-primary"
-              [routerLinkActiveOptions]="{ exact: true }"
-              class="px-space-md py-2 whitespace-nowrap transition-colors font-label-lg text-label-lg rounded-lg"
-              [class.bg-primary-container]="isExact('/')"
-              [class.text-on-primary]="isExact('/')"
-              [class.text-on-surface-variant]="!isExact('/')"
-              [class.hover:text-on-surface]="!isExact('/')"
-            >Inicio</a
-            ><a
-              routerLink="/institucional"
-              routerLinkActive="bg-primary-container text-on-primary"
-              class="px-space-md py-2 font-label-lg text-label-lg whitespace-nowrap transition-colors rounded-lg"
-              [class.text-on-surface-variant]="!isActive('/institucional')"
-              [class.hover:text-on-surface]="!isActive('/institucional')"
-            >Institucional</a
-            ><a
-              routerLink="/tramites"
-              routerLinkActive="bg-primary-container text-on-primary"
-              class="px-space-md py-2 font-label-lg text-label-lg whitespace-nowrap transition-colors rounded-lg"
-              [class.text-on-surface-variant]="!isActive('/tramites')"
-              [class.hover:text-on-surface]="!isActive('/tramites')"
-            >Servicios y Trámites</a
-            ><a
-              routerLink="/resoluciones"
-              routerLinkActive="bg-primary-container text-on-primary"
-              class="px-space-md py-2 font-label-lg text-label-lg whitespace-nowrap transition-colors rounded-lg"
-              [class.text-on-surface-variant]="!isActive('/resoluciones')"
-              [class.hover:text-on-surface]="!isActive('/resoluciones')"
-            >Normativa y Resoluciones</a
-            ><a
-              routerLink="/obras-viales"
-              routerLinkActive="bg-primary-container text-on-primary"
-              class="px-space-md py-2 font-label-lg text-label-lg whitespace-nowrap transition-colors rounded-lg"
-              [class.text-on-surface-variant]="!isActive('/obras-viales')"
-              [class.hover:text-on-surface]="!isActive('/obras-viales')"
-            >Obras y Proyectos Viales</a
-            ><a
-              routerLink="/noticias"
-              routerLinkActive="bg-primary-container text-on-primary"
-              class="px-space-md py-2 font-label-lg text-label-lg whitespace-nowrap transition-colors rounded-lg"
-              [class.text-on-surface-variant]="!isActive('/noticias')"
-              [class.hover:text-on-surface]="!isActive('/noticias')"
-            >Noticias y Comunicados</a
-            ><a
-              routerLink="/convocatorias"
-              routerLinkActive="bg-primary-container text-on-primary"
-              class="px-space-md py-2 font-label-lg text-label-lg whitespace-nowrap transition-colors rounded-lg"
-              [class.text-on-surface-variant]="!isActive('/convocatorias')"
-              [class.hover:text-on-surface]="!isActive('/convocatorias')"
-            >Oportunidad Laboral</a
-            >
+          <nav class="flex items-center gap-space-xs py-1 h-12">
+            @for (item of navItems; track item.route) {
+              <a [routerLink]="item.route"
+                 routerLinkActive="bg-primary-container text-on-primary"
+                 [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+                 class="px-space-md py-2 whitespace-nowrap transition-colors font-label-lg text-label-lg rounded-lg"
+                 [class.bg-primary-container]="isExact(item.route)"
+                 [class.text-on-primary]="isExact(item.route)"
+                 [class.text-on-surface-variant]="!isActive(item.route)"
+                 [class.hover:text-on-surface]="!isActive(item.route)">
+                {{ item.label }}
+              </a>
+            }
           </nav>
         </div>
       </div>
     </header>
+
+    <!-- Mobile: overlay + slide-right panel -->
+    @if (menuAbierto()) {
+      <div class="fixed inset-0 z-[60] lg:hidden" (click)="menuAbierto.set(false)">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="absolute right-0 top-0 h-full w-72 bg-surface-container-lowest shadow-2xl flex flex-col animate-slide-in"
+             (click)="$event.stopPropagation()">
+          <!-- Panel header -->
+          <div class="bg-primary px-space-lg py-space-lg flex items-center gap-space-md">
+            <img alt="DRTC" class="h-10 w-auto object-contain" src="/img/LOGO DRTC-2026.png" />
+            <div class="flex flex-col">
+              <span class="font-headline-sm text-headline-sm text-on-primary leading-tight">DRTC</span>
+              <span class="font-label-sm text-label-sm text-surface-variant leading-none">Gobierno Regional</span>
+            </div>
+          </div>
+          <!-- Nav links -->
+          <nav class="flex-1 overflow-y-auto py-space-sm">
+            @for (item of navItems; track item.route) {
+              <a [routerLink]="item.route"
+                 (click)="menuAbierto.set(false)"
+                 routerLinkActive="bg-primary-container text-on-primary"
+                 [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+                 class="mx-space-sm my-0.5 px-space-md py-3 flex items-center gap-space-sm transition-colors font-label-lg text-label-lg rounded-lg"
+                 [class.bg-primary-container]="isExact(item.route)"
+                 [class.text-on-primary]="isExact(item.route)"
+                 [class.text-on-surface-variant]="!isActive(item.route)"
+                 [class.hover:bg-surface-container]="!isActive(item.route)">
+                {{ item.label }}
+              </a>
+            }
+          </nav>
+          <!-- Panel footer -->
+          <div class="border-t border-outline-variant p-space-md">
+            <a routerLink="/mesa-de-partes" (click)="menuAbierto.set(false)"
+               class="w-full h-11 px-space-lg rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs transition-colors shadow-sm">
+              <span class="material-symbols-outlined text-[18px]">mark_email_unread</span>
+              <span>Mesa de Partes Virtual</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    }
   `,
 })
 export class HeaderComponent {
   private router = inject(Router);
+
+  menuAbierto = signal(false);
+
+  navItems = [
+    { route: '/', label: 'Inicio' },
+    { route: '/institucional', label: 'Institucional' },
+    { route: '/tramites', label: 'Servicios y Tr\u00e1mites' },
+    { route: '/resoluciones', label: 'Normativa y Resoluciones' },
+    { route: '/obras-viales', label: 'Obras y Proyectos Viales' },
+    { route: '/noticias', label: 'Noticias y Comunicados' },
+    { route: '/convocatorias', label: 'Oportunidad Laboral' },
+  ];
 
   isExact(route: string): boolean {
     return this.router.url === route;
