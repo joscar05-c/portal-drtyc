@@ -12,43 +12,43 @@ export const routes: Routes = [
       },
       {
         path: 'institucional',
-        loadComponent: () => import('./features/institucional/institucional.component').then(m => m.InstitucionalComponent)
+        loadComponent: () => import('./features/institucional/institucional/institucional.component').then(m => m.InstitucionalComponent)
       },
       {
         path: 'tramites',
-        loadComponent: () => import('./features/servicios/servicios.component').then(m => m.ServiciosComponent)
+        loadComponent: () => import('./features/servicios/servicios/servicios.component').then(m => m.ServiciosComponent)
       },
       {
         path: 'resoluciones',
-        loadComponent: () => import('./features/resoluciones/resoluciones.component').then(m => m.ResolucionesComponent)
+        loadComponent: () => import('./features/resoluciones/resoluciones/resoluciones.component').then(m => m.ResolucionesComponent)
       },
       {
         path: 'obras-viales',
-        loadComponent: () => import('./features/obras/obras.component').then(m => m.ObrasComponent)
+        loadComponent: () => import('./features/obras/obras/obras.component').then(m => m.ObrasComponent)
       },
       {
         path: 'noticias',
-        loadComponent: () => import('./features/noticias/noticias.component').then(m => m.NoticiasComponent)
+        loadComponent: () => import('./features/noticias/noticias/noticias.component').then(m => m.NoticiasComponent)
       },
       {
         path: 'noticias/:slug',
-        loadComponent: () => import('./features/noticias/noticia-detalle.component').then(m => m.NoticiaDetalleComponent)
+        loadComponent: () => import('./features/noticias/noticia-detalle/noticia-detalle.component').then(m => m.NoticiaDetalleComponent)
       },
       {
         path: 'convocatorias',
-        loadComponent: () => import('./features/convocatorias/convocatorias-list.component').then(m => m.ConvocatoriasListComponent)
+        loadComponent: () => import('./features/convocatorias/convocatorias-list/convocatorias-list.component').then(m => m.ConvocatoriasListComponent)
       },
       {
         path: 'convocatorias/:slug',
-        loadComponent: () => import('./features/convocatorias/convocatoria-detail.component').then(m => m.ConvocatoriaDetailComponent)
+        loadComponent: () => import('./features/convocatorias/convocatoria-detail/convocatoria-detail.component').then(m => m.ConvocatoriaDetailComponent)
       },
       {
         path: 'convocatorias/:slug/postular',
-        loadComponent: () => import('./features/convocatorias/postulate.component').then(m => m.PostulateComponent)
+        loadComponent: () => import('./features/convocatorias/postulate/postulate.component').then(m => m.PostulateComponent)
       },
       {
         path: 'seguimiento-reclamos',
-        loadComponent: () => import('./features/complaint/complaint-track.component').then(m => m.ComplaintTrackComponent)
+        loadComponent: () => import('./features/complaint/complaint-track/complaint-track.component').then(m => m.ComplaintTrackComponent)
       }
     ]
   }
