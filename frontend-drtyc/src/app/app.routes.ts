@@ -11,8 +11,28 @@ export const routes: Routes = [
         loadComponent: () => import('./features/inicio/inicio.component').then(m => m.InicioComponent)
       },
       {
+        path: 'institucional',
+        loadComponent: () => import('./features/institucional/institucional.component').then(m => m.InstitucionalComponent)
+      },
+      {
+        path: 'tramites',
+        loadComponent: () => import('./features/servicios/servicios.component').then(m => m.ServiciosComponent)
+      },
+      {
         path: 'resoluciones',
         loadComponent: () => import('./features/resoluciones/resoluciones.component').then(m => m.ResolucionesComponent)
+      },
+      {
+        path: 'obras-viales',
+        loadComponent: () => import('./features/obras/obras.component').then(m => m.ObrasComponent)
+      },
+      {
+        path: 'noticias',
+        loadComponent: () => import('./features/noticias/noticias.component').then(m => m.NoticiasComponent)
+      },
+      {
+        path: 'noticias/:slug',
+        loadComponent: () => import('./features/noticias/noticia-detalle.component').then(m => m.NoticiaDetalleComponent)
       },
       {
         path: 'convocatorias',
@@ -25,30 +45,6 @@ export const routes: Routes = [
       {
         path: 'convocatorias/:slug/postular',
         loadComponent: () => import('./features/convocatorias/postulate.component').then(m => m.PostulateComponent)
-      },
-      {
-        path: 'noticias',
-        loadComponent: () => import('./features/noticias/noticias.component').then(m => m.NoticiasComponent)
-      },
-      {
-        path: 'noticias/:slug',
-        loadComponent: () => import('./features/noticias/noticia-detalle.component').then(m => m.NoticiaDetalleComponent)
-      },
-      {
-        path: 'directorio',
-        loadComponent: () => import('./features/inicio/inicio.component').then(m => m.InicioComponent)
-      },
-      {
-        path: 'preguntas-frecuentes',
-        loadComponent: () => import('./features/inicio/inicio.component').then(m => m.InicioComponent)
-      },
-      {
-        path: 'obras-viales',
-        loadComponent: () => import('./features/inicio/inicio.component').then(m => m.InicioComponent)
-      },
-      {
-        path: 'reclamos',
-        loadComponent: () => import('./features/inicio/inicio.component').then(m => m.InicioComponent)
       },
       {
         path: 'seguimiento-reclamos',
