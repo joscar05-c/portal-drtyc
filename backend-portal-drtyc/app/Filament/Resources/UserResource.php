@@ -15,6 +15,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
+use UnitEnum;
 use Spatie\Permission\Models\Role;
 
 class UserResource extends Resource
@@ -28,6 +29,10 @@ class UserResource extends Resource
     protected static ?string $modelLabel = 'Usuario';
 
     protected static ?string $pluralModelLabel = 'Usuarios';
+
+    protected static string|UnitEnum|null $navigationGroup = 'Sistema';
+
+    protected static ?int $navigationSort = 10;
 
     public static function canAccess(): bool
     {
