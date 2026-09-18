@@ -13,6 +13,7 @@ import { Complaint, ComplaintResponse, ComplaintTrackRequest, ComplaintTrackResu
 import { PaginatedResponse } from '../interfaces/pagination.model';
 import { JobPosting } from '../interfaces/job-posting.model';
 import { QuickLink } from '../interfaces/quick-link.model';
+import { JobCall, ApplicationStatusResult } from '../interfaces/job-call.model';
 
 @Injectable({ providedIn: 'root' })
 export class PortalService {
@@ -68,5 +69,24 @@ export class PortalService {
 
   getQuickLinks(): Observable<QuickLink[]> {
     return this.http.get<QuickLink[]>(`${this.apiUrl}/quick-links`);
+  }
+
+  getJobCalls(): Observable<JobCall[]> {
+    return this.http.get<JobCall[]>(`${this.apiUrl}/job-calls`);
+  }
+
+  getJobCallBySlug(slug: string): Observable<JobCall> {
+    return this.http.get<JobCall>(`${this.apiUrl}/job-calls/${slug}`);
+  }
+
+  getJobCallsByType(type: string): Observable<JobCall[]> {
+    return this.http.get<JobCall[]>(`${this.apiUrl}/job-calls/type/${type}`);
+  }
+
+  checkApplicationStatus(jobCallId: number, documentNumber: string): Observable<ApplicationStatusResult> {
+    return this.http.post<ApplicationStatusResult>(`${this.apiUrl}/postulate/check-status`, {
+      job_call_id: jobCallId,
+      document_number: documentNumber,
+    });
   }
 }
