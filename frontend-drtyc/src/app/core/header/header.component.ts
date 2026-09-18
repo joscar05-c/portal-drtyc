@@ -146,12 +146,12 @@ import { RouterLink, RouterLinkActive, Router } from '@angular/router';
               [class.hover:text-on-surface]="!isActive('/noticias')"
             >Noticias y Comunicados</a
             ><a
-              routerLink="/contacto"
+              routerLink="/convocatorias"
               routerLinkActive="bg-primary-container text-on-primary"
               class="px-space-md py-2 font-label-lg text-label-lg whitespace-nowrap transition-colors rounded-lg"
-              [class.text-on-surface-variant]="!isActive('/contacto')"
-              [class.hover:text-on-surface]="!isActive('/contacto')"
-            >Participación y Contacto</a
+              [class.text-on-surface-variant]="!isActive('/convocatorias')"
+              [class.hover:text-on-surface]="!isActive('/convocatorias')"
+            >Oportunidad Laboral</a
             >
           </nav>
         </div>
