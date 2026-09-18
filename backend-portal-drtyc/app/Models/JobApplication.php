@@ -4,37 +4,34 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
-class JobPosting extends Model
+class JobApplication extends Model
 {
     use HasFactory, SoftDeletes, LogsActivity;
 
     protected $fillable = [
-        'title',
-        'description',
-        'bases_pdf_path',
-        'documents',
-        'start_date',
-        'end_date',
+        'job_call_id',
+        'document_number',
+        'full_name',
+        'email',
+        'phone',
+        'file_path',
         'status',
     ];
 
-    protected function casts(): array
+    public function jobCall(): BelongsTo
     {
-        return [
-            'start_date' => 'date',
-            'end_date' => 'date',
-            'documents' => 'array',
-        ];
+        return $this->belongsTo(JobCall::class);
     }
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['title', 'description', 'bases_pdf_path', 'documents', 'start_date', 'end_date', 'status'])
+            ->logOnly(['status'])
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
     }
