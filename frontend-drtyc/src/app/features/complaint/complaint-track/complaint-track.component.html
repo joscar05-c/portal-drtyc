@@ -1,0 +1,130 @@
+<div class="max-w-7xl mx-auto px-gutter py-space-xl">
+  <section class="w-full">
+
+    <!-- Encabezado -->
+    <div class="mb-space-xl">
+      <div class="flex items-center gap-space-xs text-secondary text-label-md uppercase tracking-wider mb-1">
+        <span class="material-symbols-outlined text-[18px]">search</span>
+        <span>Seguimiento de Reclamos</span>
+      </div>
+      <h1 class="text-headline-xl text-primary font-bold mb-space-sm">Consultar Estado de Reclamo</h1>
+      <p class="text-body-lg text-on-surface-variant">Ingrese su c&#243;digo de seguimiento y n&#250;mero de documento para conocer el estado de su reclamo.</p>
+    </div>
+
+    <!-- Tarjeta de B&#250;squeda -->
+    <div class="max-w-2xl mx-auto">
+      <div class="bg-surface-container-lowest rounded-xl shadow-md p-space-lg md:p-space-xl">
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-space-lg">
+
+          <div>
+            <label for="trackingCode" class="block text-label-sm text-on-surface-variant mb-1 font-semibold">C&#243;digo de Seguimiento *</label>
+            <input id="trackingCode"
+                   type="text"
+                   formControlName="trackingCode"
+                   placeholder="Ej. REC-2026-000001"
+                   class="w-full h-11 px-space-md rounded bg-surface-container-low text-on-surface text-body-sm focus:outline-none focus:ring-2 focus:ring-secondary font-mono"
+                   [class.ring-error]="form.get('trackingCode')?.invalid && form.get('trackingCode')?.touched">
+            @if (form.get('trackingCode')?.invalid && form.get('trackingCode')?.touched) {
+              <p class="text-body-sm text-error mt-1">El c&#243;digo de seguimiento es obligatorio.</p>
+            }
+          </div>
+
+          <div>
+            <label for="documentNumber" class="block text-label-sm text-on-surface-variant mb-1 font-semibold">N&#176; de Documento (DNI/CE) *</label>
+            <input id="documentNumber"
+                   type="text"
+                   formControlName="documentNumber"
+                   placeholder="Ej. 45892147"
+                   class="w-full h-11 px-space-md rounded bg-surface-container-low text-on-surface text-body-sm focus:outline-none focus:ring-2 focus:ring-secondary"
+                   [class.ring-error]="form.get('documentNumber')?.invalid && form.get('documentNumber')?.touched">
+            @if (form.get('documentNumber')?.invalid && form.get('documentNumber')?.touched) {
+              <p class="text-body-sm text-error mt-1">El n&#250;mero de documento es obligatorio.</p>
+            }
+          </div>
+
+          <button type="submit"
+                  [disabled]="isLoading()"
+                  class="w-full h-12 px-space-xl rounded bg-primary hover:bg-primary-container text-on-primary font-label-lg font-bold flex items-center justify-center gap-space-xs shadow-md transition-all disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
+            @if (isLoading()) {
+              <span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span>
+              <span>Buscando...</span>
+            } @else {
+              <span class="material-symbols-outlined text-[20px]">search</span>
+              <span>Buscar Reclamo</span>
+            }
+          </button>
+        </form>
+
+        <!-- Error -->
+        @if (errorMessage()) {
+          <div class="mt-space-lg p-space-lg rounded-lg bg-error/10 text-on-surface flex items-start gap-space-md">
+            <span class="material-symbols-outlined text-error text-[32px] shrink-0">error</span>
+            <div>
+              <h4 class="text-headline-sm font-bold mb-1">No se encontr&#243; el reclamo</h4>
+              <p class="text-body-sm text-on-surface-variant">{{ errorMessage() }}</p>
+            </div>
+          </div>
+        }
+
+      </div>
+    </div>
+
+    <!-- Resultados -->
+    @if (trackResult()) {
+      <div class="max-w-2xl mx-auto mt-space-lg">
+
+        <!-- Tarjeta de Estado -->
+        <div class="bg-surface-container-lowest rounded-xl shadow-md p-space-lg md:p-space-xl space-y-space-lg">
+
+          <!-- Encabezado del resultado -->
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-label-sm text-outline block">C&#243;digo de Seguimiento</span>
+              <span class="font-mono text-headline-md font-bold text-secondary">{{ trackResult()!.tracking_code }}</span>
+            </div>
+            <span class="px-space-md py-1 rounded-full text-label-sm font-bold shadow-sm flex items-center gap-1"
+                  [class]="getEstadoClase(trackResult()!.status)">
+              <span class="material-symbols-outlined text-[16px]">{{ getEstadoIcon(trackResult()!.status) }}</span>
+              {{ trackResult()!.status_label }}
+            </span>
+          </div>
+
+          <!-- Detalles -->
+          <div class="grid grid-cols-2 gap-space-md">
+            <div class="p-space-md rounded-lg bg-surface-container-low">
+              <span class="text-label-sm text-outline block mb-1">Tipo</span>
+              <span class="text-label-md font-semibold text-on-surface">{{ trackResult()!.type_label }}</span>
+            </div>
+            <div class="p-space-md rounded-lg bg-surface-container-low">
+              <span class="text-label-sm text-outline block mb-1">Fecha de Registro</span>
+              <span class="text-label-md font-semibold text-on-surface">{{ trackResult()!.registered_at }}</span>
+            </div>
+          </div>
+
+          <!-- Detalle del Reclamo -->
+          @if (trackResult()!.details) {
+            <div class="p-space-md rounded-lg bg-surface-container-low border border-outline-variant">
+              <span class="text-label-sm text-outline block mb-1">Detalle del Reclamo</span>
+              <p class="text-body-sm text-on-surface">{{ trackResult()!.details }}</p>
+            </div>
+          }
+
+          <!-- Respuesta Institucional -->
+          @if (trackResult()!.citizen_response) {
+            <div class="p-space-lg rounded-lg bg-secondary/5 border border-secondary/20">
+              <div class="flex items-center gap-space-xs text-secondary mb-space-sm">
+                <span class="material-symbols-outlined text-[20px]">mark_email_read</span>
+                <span class="text-label-md font-bold">Respuesta Oficial de la DRTC</span>
+              </div>
+              <p class="text-body-sm text-on-surface leading-relaxed">{{ trackResult()!.citizen_response }}</p>
+            </div>
+          }
+
+        </div>
+
+      </div>
+    }
+
+  </section>
+</div>
