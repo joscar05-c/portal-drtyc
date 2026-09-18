@@ -13,7 +13,7 @@ class RoleAndPermissionSeeder extends Seeder
     {
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        $resources = ['post', 'document', 'category', 'user', 'role', 'banner', 'staff_member', 'job_posting', 'quick_link', 'procedure', 'project', 'office', 'complaint', 'faq'];
+        $resources = ['post', 'document', 'category', 'user', 'role', 'banner', 'staff_member', 'job_posting', 'job_call', 'quick_link', 'procedure', 'project', 'office', 'complaint', 'faq'];
 
         $permissions = [];
         foreach ($resources as $resource) {
@@ -35,6 +35,7 @@ class RoleAndPermissionSeeder extends Seeder
             'view_any_banner', 'view_banner', 'create_banner', 'update_banner', 'delete_banner',
             'view_any_staff_member', 'view_staff_member', 'create_staff_member', 'update_staff_member', 'delete_staff_member',
             'view_any_job_posting', 'view_job_posting', 'create_job_posting', 'update_job_posting', 'delete_job_posting',
+            'view_any_job_call', 'view_job_call', 'create_job_call', 'update_job_call', 'delete_job_call',
             'view_any_quick_link', 'view_quick_link', 'create_quick_link', 'update_quick_link', 'delete_quick_link',
             'view_any_procedure', 'view_procedure', 'create_procedure', 'update_procedure', 'delete_procedure',
             'view_any_project', 'view_project', 'create_project', 'update_project', 'delete_project',
