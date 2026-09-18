@@ -16,7 +16,15 @@ export const routes: Routes = [
       },
       {
         path: 'convocatorias',
-        loadComponent: () => import('./features/convocatorias/convocatorias.component').then(m => m.ConvocatoriasComponent)
+        loadComponent: () => import('./features/convocatorias/convocatorias-list.component').then(m => m.ConvocatoriasListComponent)
+      },
+      {
+        path: 'convocatorias/:slug',
+        loadComponent: () => import('./features/convocatorias/convocatoria-detail.component').then(m => m.ConvocatoriaDetailComponent)
+      },
+      {
+        path: 'convocatorias/:slug/postular',
+        loadComponent: () => import('./features/convocatorias/postulate.component').then(m => m.PostulateComponent)
       },
       {
         path: 'noticias',
