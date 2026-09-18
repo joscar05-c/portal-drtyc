@@ -173,14 +173,14 @@ export class ConvocatoriaDetailComponent implements OnInit {
   resultadoConsulta = signal<ApplicationStatusResult | null>(null);
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
+    const slug = this.route.snapshot.paramMap.get('slug');
+    if (!slug) {
       this.error.set('Convocatoria no encontrada.');
       this.cargando.set(false);
       return;
     }
 
-    this.portalService.getJobCallById(+id).subscribe({
+    this.portalService.getJobCallBySlug(slug).subscribe({
       next: (data) => {
         this.convocatoria.set(data);
         this.cargando.set(false);
