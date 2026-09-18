@@ -4,8 +4,10 @@ use App\Http\Controllers\Api\BannerController;
 use App\Http\Controllers\Api\ComplaintController;
 use App\Http\Controllers\Api\DocumentController;
 use App\Http\Controllers\Api\FaqController;
+use App\Http\Controllers\Api\JobCallController;
 use App\Http\Controllers\Api\JobPostingController;
 use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\PostulateController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\QuickLinkController;
 use App\Http\Controllers\Api\SettingController;
@@ -34,6 +36,10 @@ Route::prefix('v1')->group(function () {
         Route::get('/faqs', [FaqController::class, 'index']);
 
         Route::get('/settings', [SettingController::class, 'index']);
+
+        Route::get('/job-calls', [JobCallController::class, 'index']);
+        Route::get('/job-calls/{slug}', [JobCallController::class, 'show']);
+        Route::get('/job-calls/type/{type}', [JobCallController::class, 'byType']);
     });
 
     // Escritura pública - Rate más restrictivo
@@ -43,6 +49,11 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('throttle:api-track')->group(function () {
         Route::post('/complaints/track', [ComplaintController::class, 'track']);
+    });
+
+    Route::middleware('throttle:api-complaints')->group(function () {
+        Route::post('/postulate', [PostulateController::class, 'store']);
+        Route::post('/postulate/check-status', [PostulateController::class, 'checkStatus']);
     });
 
 });
