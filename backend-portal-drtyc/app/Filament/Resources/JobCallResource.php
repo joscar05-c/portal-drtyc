@@ -264,10 +264,10 @@ class JobCallResource extends Resource
         ];
     }
 
-    public static function getRelationManagers(): array
+    public static function getRelations(): array
     {
         return [
-            \App\Filament\Resources\JobCallResource\RelationManagers\ApplicationsRelationManager::class,
+            'applications' => \App\Filament\Resources\JobCallResource\RelationManagers\ApplicationsRelationManager::class,
         ];
     }
 }
