@@ -16,15 +16,9 @@ class JobCallController extends Controller
         return response()->json($jobCalls);
     }
 
-    public function show(string $id): JsonResponse
+    public function show(string $slug): JsonResponse
     {
-        $jobCall = JobCall::find($id);
-
-        if (!$jobCall) {
-            return response()->json([
-                'message' => 'Convocatoria no encontrada.',
-            ], 404);
-        }
+        $jobCall = JobCall::where('slug', $slug)->firstOrFail();
 
         return response()->json($jobCall);
     }
