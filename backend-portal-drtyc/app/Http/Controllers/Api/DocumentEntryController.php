@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Area;
 use App\Models\DocumentEntry;
+use App\Models\DocumentMovement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -49,6 +51,23 @@ class DocumentEntryController extends Controller
             'status' => 'Pendiente',
         ]);
 
+        $mainArea = Area::where('is_main_entry_point', true)->first();
+
+        if ($mainArea) {
+            DocumentMovement::create([
+                'document_entry_id' => $entry->id,
+                'from_area_id' => null,
+                'from_user_id' => null,
+                'to_area_id' => $mainArea->id,
+                'to_user_id' => null,
+                'action_requested' => 'Ingreso por Mesa de Partes Virtual',
+                'observations' => 'Documento ingresado vía Mesa de Partes Virtual por ' . $validated['sender_name'],
+                'is_received' => false,
+            ]);
+
+            $entry->update(['status' => 'En trámite']);
+        }
+
         return response()->json([
             'message' => 'Documento ingresado exitosamente.',
             'tracking_number' => $entry->tracking_number,
@@ -65,7 +84,8 @@ class DocumentEntryController extends Controller
         $entry = DocumentEntry::with([
             'movements.fromArea',
             'movements.toArea',
-            'movements.user',
+            'movements.fromUser',
+            'movements.toUser',
         ])
             ->where('tracking_number', $request->tracking_number)
             ->where('document_number', $request->document_number)
@@ -86,10 +106,13 @@ class DocumentEntryController extends Controller
             'registered_at' => $entry->created_at->format('d/m/Y H:i'),
             'movements' => $entry->movements->sortByDesc('created_at')->values()->map(fn ($m) => [
                 'from_area' => $m->fromArea->name ?? 'N/A',
+                'from_user' => $m->fromUser->name ?? 'N/A',
                 'to_area' => $m->toArea->name ?? 'N/A',
+                'to_user' => $m->toUser->name ?? null,
                 'action_requested' => $m->action_requested,
                 'observations' => $m->observations,
-                'user' => $m->user->name ?? 'N/A',
+                'is_received' => $m->is_received,
+                'received_at' => $m->received_at?->format('d/m/Y H:i'),
                 'date' => $m->created_at->format('d/m/Y H:i'),
             ]),
         ]);
