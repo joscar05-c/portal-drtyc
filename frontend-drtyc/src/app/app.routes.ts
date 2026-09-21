@@ -49,6 +49,14 @@ export const routes: Routes = [
       {
         path: 'seguimiento-reclamos',
         loadComponent: () => import('./features/complaint/complaint-track/complaint-track.component').then(m => m.ComplaintTrackComponent)
+      },
+      {
+        path: 'mesa-de-partes',
+        loadComponent: () => import('./features/mesa-partes/mesa-partes/mesa-partes.component').then(m => m.MesaPartesComponent)
+      },
+      {
+        path: 'mesa-de-partes/seguimiento',
+        loadComponent: () => import('./features/mesa-partes/seguimiento/seguimiento.component').then(m => m.SeguimientoComponent)
       }
     ]
   }
