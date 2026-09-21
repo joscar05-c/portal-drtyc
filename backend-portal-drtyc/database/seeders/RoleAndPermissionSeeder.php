@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Area;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
@@ -13,7 +14,7 @@ class RoleAndPermissionSeeder extends Seeder
     {
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        $resources = ['post', 'document', 'category', 'user', 'role', 'banner', 'staff_member', 'job_posting', 'job_call', 'quick_link', 'procedure', 'project', 'office', 'complaint', 'faq', 'document_entry'];
+        $resources = ['post', 'document', 'category', 'user', 'role', 'banner', 'staff_member', 'job_posting', 'job_call', 'quick_link', 'procedure', 'project', 'office', 'complaint', 'faq', 'document_entry', 'area'];
 
         $permissions = [];
         foreach ($resources as $resource) {
@@ -26,6 +27,9 @@ class RoleAndPermissionSeeder extends Seeder
 
         $superAdmin = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
         $superAdmin->givePermissionTo($permissions);
+
+        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $admin->givePermissionTo($permissions);
 
         $editor = Role::firstOrCreate(['name' => 'editor', 'guard_name' => 'web']);
         $editor->givePermissionTo([
@@ -45,13 +49,39 @@ class RoleAndPermissionSeeder extends Seeder
             'view_any_document_entry', 'view_document_entry', 'create_document_entry', 'update_document_entry', 'delete_document_entry',
         ]);
 
-        $admin = User::firstOrCreate(
+        $mesaDePartes = Role::firstOrCreate(['name' => 'mesa_de_partes', 'guard_name' => 'web']);
+        $mesaDePartes->givePermissionTo([
+            'view_any_document_entry',
+            'view_document_entry',
+            'create_document_entry',
+            'update_document_entry',
+            'view_any_area',
+            'view_area',
+            'view_any_user',
+            'view_user',
+        ]);
+
+        $especialista = Role::firstOrCreate(['name' => 'especialista', 'guard_name' => 'web']);
+        $especialista->givePermissionTo([
+            'view_any_document_entry',
+            'view_document_entry',
+            'update_document_entry',
+            'view_any_area',
+            'view_area',
+        ]);
+
+        Area::firstOrCreate(
+            ['name' => 'Mesa de Partes'],
+            ['description' => 'Área principal de recepción y trámite documentario', 'is_main_entry_point' => true]
+        );
+
+        $adminUser = User::firstOrCreate(
             ['email' => 'admin@portal.drtyc'],
             [
                 'name' => 'Admin',
                 'password' => bcrypt('password'),
             ]
         );
-        $admin->assignRole('super_admin');
+        $adminUser->assignRole('super_admin');
     }
 }
