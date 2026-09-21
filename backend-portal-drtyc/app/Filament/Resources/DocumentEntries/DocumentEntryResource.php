@@ -3,11 +3,15 @@
 namespace App\Filament\Resources\DocumentEntries;
 
 use App\Filament\Resources\DocumentEntries\Pages;
+use App\Models\Area;
 use App\Models\DocumentEntry;
+use App\Models\DocumentMovement;
+use App\Models\User;
 use BackedEnum;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Schemas;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -32,14 +36,35 @@ class DocumentEntryResource extends Resource
 
     protected static ?int $navigationSort = 9;
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        $user = auth()->user();
+
+        if ($user->hasAnyRole(['super_admin', 'admin', 'editor'])) {
+            return parent::getEloquentQuery();
+        }
+
+        return parent::getEloquentQuery()
+            ->where(function ($query) use ($user) {
+                $query->whereHas('movements', function ($q) use ($user) {
+                    $q->where('to_area_id', $user->area_id)
+                        ->where('is_received', false);
+                })
+                ->orWhereHas('movements', function ($q) use ($user) {
+                    $q->where('to_user_id', $user->id)
+                        ->where('is_received', false);
+                });
+            });
+    }
+
     public static function canAccess(): bool
     {
-        return auth()->user()->hasAnyRole(['super_admin', 'editor']) || auth()->user()->hasPermissionTo('view_any_document_entry');
+        return auth()->user()->hasAnyRole(['super_admin', 'admin', 'editor', 'mesa_de_partes', 'especialista']);
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()->hasPermissionTo('create_document_entry');
+        return auth()->user()->hasAnyRole(['super_admin', 'admin', 'mesa_de_partes']);
     }
 
     public static function canEdit($record): bool
@@ -233,6 +258,124 @@ class DocumentEntryResource extends Resource
             ])
             ->actions([
                 Actions\EditAction::make(),
+
+                // Acción: Recepcionar (Cuaderno de Cargos digital)
+                Actions\Action::make('recepcionar')
+                    ->label('Recepcionar')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Recepcionar Expediente')
+                    ->modalDescription('Confirma que el documento ha sido recepcionado en tu área. Esto registrará la fecha y hora de recepción (Cargo digital).')
+                    ->modalSubmitActionLabel('Sí, Recepcionar')
+                    ->action(function (DocumentEntry $record): void {
+                        $user = auth()->user();
+
+                        $movement = DocumentMovement::where('document_entry_id', $record->id)
+                            ->where('to_area_id', $user->area_id)
+                            ->where('from_user_id', '!=', $user->id)
+                            ->where('is_received', false)
+                            ->latest()
+                            ->first();
+
+                        if ($movement) {
+                            $movement->update([
+                                'is_received' => true,
+                                'received_at' => now(),
+                            ]);
+                        }
+                    })
+                    ->visible(function (DocumentEntry $record): bool {
+                        $user = auth()->user();
+                        if (!$user->area_id) return false;
+
+                        return DocumentMovement::where('document_entry_id', $record->id)
+                            ->where('to_area_id', $user->area_id)
+                            ->where('from_user_id', '!=', $user->id)
+                            ->where('is_received', false)
+                            ->exists();
+                    }),
+
+                // Acción: Derivar / Asignar
+                Actions\Action::make('derivarAsignar')
+                    ->label('Derivar / Asignar')
+                    ->icon('heroicon-o-arrow-right-circle')
+                    ->color('primary')
+                    ->requiresConfirmation()
+                    ->modalHeading('Derivar Expediente')
+                    ->modalSubmitActionLabel('Derivar')
+                    ->form([
+                        Forms\Components\Select::make('tipo_envio')
+                            ->label('Tipo de Envío')
+                            ->options([
+                                'area' => 'A otra Área',
+                                'especialista' => 'A un Especialista de mi Área',
+                            ])
+                            ->required()
+                            ->live()
+                            ->native(false),
+                        Forms\Components\Select::make('to_area_id')
+                            ->label('Área Destino')
+                            ->options(fn () => Area::pluck('name', 'id'))
+                            ->required()
+                            ->visible(fn (Get $get) => $get('tipo_envio') === 'area')
+                            ->native(false),
+                        Forms\Components\Select::make('to_user_id')
+                            ->label('Especialista Destino')
+                            ->options(function () {
+                                $user = auth()->user();
+                                if (!$user->area_id) return [];
+                                return User::where('area_id', $user->area_id)
+                                    ->where('id', '!=', $user->id)
+                                    ->pluck('name', 'id');
+                            })
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->visible(fn (Get $get) => $get('tipo_envio') === 'especialista')
+                            ->native(false),
+                        Forms\Components\Select::make('action_requested')
+                            ->label('Proveído / Instrucción')
+                            ->options([
+                                'Para atención' => 'Para atención',
+                                'Para informe' => 'Para informe',
+                                'Para archivo' => 'Para archivo',
+                                'Para revisión' => 'Para revisión',
+                                'Para conformidad' => 'Para conformidad',
+                                'Para visto bueno' => 'Para visto bueno',
+                                'Para devolución' => 'Para devolución',
+                            ])
+                            ->required()
+                            ->native(false),
+                        Forms\Components\Textarea::make('observations')
+                            ->label('Observaciones')
+                            ->rows(3)
+                            ->placeholder('Indicaciones adicionales al destino...'),
+                    ])
+                    ->action(function (DocumentEntry $record, array $data): void {
+                        $user = auth()->user();
+
+                        $toAreaId = $data['tipo_envio'] === 'area'
+                            ? $data['to_area_id']
+                            : User::find($data['to_user_id'])?->area_id;
+
+                        DocumentMovement::create([
+                            'document_entry_id' => $record->id,
+                            'from_area_id' => $user->area_id,
+                            'from_user_id' => $user->id,
+                            'to_area_id' => $toAreaId,
+                            'to_user_id' => $data['to_user_id'] ?? null,
+                            'action_requested' => $data['action_requested'],
+                            'observations' => $data['observations'] ?? null,
+                            'is_received' => false,
+                        ]);
+
+                        $record->update(['status' => 'En Proceso']);
+                    })
+                    ->visible(fn (DocumentEntry $record): bool =>
+                        $record->status !== 'Atendido' && $record->status !== 'Rechazado'
+                    ),
+
                 Actions\DeleteAction::make(),
             ])
             ->bulkActions([
