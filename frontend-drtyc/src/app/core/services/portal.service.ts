@@ -14,6 +14,7 @@ import { PaginatedResponse } from '../interfaces/pagination.model';
 import { JobPosting } from '../interfaces/job-posting.model';
 import { QuickLink } from '../interfaces/quick-link.model';
 import { JobCall, ApplicationStatusResult } from '../interfaces/job-call.model';
+import { DocumentEntryTrack } from '../interfaces/document-entry.model';
 
 @Injectable({ providedIn: 'root' })
 export class PortalService {
@@ -86,6 +87,17 @@ export class PortalService {
   checkApplicationStatus(jobCallId: number, documentNumber: string): Observable<ApplicationStatusResult> {
     return this.http.post<ApplicationStatusResult>(`${this.apiUrl}/postulate/check-status`, {
       job_call_id: jobCallId,
+      document_number: documentNumber,
+    });
+  }
+
+  submitDocumentEntry(formData: FormData): Observable<{ message: string; tracking_number: string }> {
+    return this.http.post<{ message: string; tracking_number: string }>(`${this.apiUrl}/document-entries`, formData);
+  }
+
+  trackDocumentEntry(trackingNumber: string, documentNumber: string): Observable<DocumentEntryTrack> {
+    return this.http.post<DocumentEntryTrack>(`${this.apiUrl}/document-entries/track`, {
+      tracking_number: trackingNumber,
       document_number: documentNumber,
     });
   }
