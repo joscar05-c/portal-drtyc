@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\BannerController;
 use App\Http\Controllers\Api\ComplaintController;
 use App\Http\Controllers\Api\DocumentController;
+use App\Http\Controllers\Api\DocumentEntryController;
 use App\Http\Controllers\Api\FaqController;
 use App\Http\Controllers\Api\JobCallController;
 use App\Http\Controllers\Api\JobPostingController;
@@ -54,6 +55,14 @@ Route::prefix('v1')->group(function () {
     Route::middleware('throttle:api-complaints')->group(function () {
         Route::post('/postulate', [PostulateController::class, 'store']);
         Route::post('/postulate/check-status', [PostulateController::class, 'checkStatus']);
+    });
+
+    Route::middleware('throttle:api-complaints')->group(function () {
+        Route::post('/document-entries', [DocumentEntryController::class, 'store']);
+    });
+
+    Route::middleware('throttle:api-track')->group(function () {
+        Route::post('/document-entries/track', [DocumentEntryController::class, 'track']);
     });
 
 });
