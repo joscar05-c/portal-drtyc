@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
+use App\Models\Area;
 use App\Models\User;
 use BackedEnum;
 use Filament\Actions;
@@ -36,7 +37,7 @@ class UserResource extends Resource
 
     public static function canAccess(): bool
     {
-        return auth()->user()->hasAnyRole(['super_admin']) || auth()->user()->hasPermissionTo('view_any_user');
+        return auth()->user()->hasAnyRole(['super_admin', 'admin', 'editor']);
     }
 
     public static function canCreate(): bool
@@ -82,6 +83,13 @@ class UserResource extends Resource
                         ->multiple()
                         ->preload()
                         ->searchable(),
+                    Forms\Components\Select::make('area_id')
+                        ->label('Área')
+                        ->relationship('area', 'name')
+                        ->searchable()
+                        ->preload()
+                        ->nullable()
+                        ->placeholder('Sin área asignada'),
                 ])->columns(2),
             ]);
     }
@@ -102,6 +110,11 @@ class UserResource extends Resource
                     ->label('Roles')
                     ->badge()
                     ->separator(','),
+                Tables\Columns\TextColumn::make('area.name')
+                    ->label('Área')
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('—'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Creado')
                     ->dateTime('d/m/Y H:i')

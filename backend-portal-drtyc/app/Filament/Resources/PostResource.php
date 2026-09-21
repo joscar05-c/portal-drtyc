@@ -31,7 +31,7 @@ class PostResource extends Resource
 
     public static function canAccess(): bool
     {
-        return auth()->user()->hasAnyRole(['super_admin', 'editor']) || auth()->user()->hasPermissionTo('view_any_post');
+        return auth()->user()->hasAnyRole(['super_admin', 'admin', 'editor']);
     }
 
     public static function canCreate(): bool
