@@ -1,0 +1,184 @@
+<section class="w-full mb-space-xl">
+  <!-- Hero Header -->
+  <div class="bg-surface-container-low py-space-xl">
+    <div class="max-w-7xl mx-auto px-gutter text-center">
+      <div class="flex items-center justify-center gap-space-xs text-secondary text-label-md uppercase tracking-wider mb-space-sm">
+        <span class="material-symbols-outlined text-[18px]">route</span>
+        <span>Seguimiento de Expedientes</span>
+      </div>
+      <h1 class="text-headline-xl text-primary font-bold mb-space-sm">Hoja de Ruta</h1>
+      <p class="text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+        Consulte el estado y las derivaciones de su documento ingresado en la Mesa de Partes Virtual.
+      </p>
+    </div>
+  </div>
+
+  <div class="max-w-4xl mx-auto px-gutter py-space-xl">
+
+    <!-- Formulario de Consulta -->
+    @if (!expediente()) {
+      <div class="bg-surface-container-lowest rounded-xl shadow-md p-space-lg md:p-space-xl">
+        <div class="flex items-center gap-space-sm mb-space-lg">
+          <span class="material-symbols-outlined text-secondary text-[24px]">search</span>
+          <h2 class="text-headline-md text-primary font-bold">Consultar Expediente</h2>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="consultar()" class="space-y-space-md">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+            <div>
+              <label class="block text-label-sm text-on-surface-variant mb-1 font-semibold">N&#170; de Seguimiento *</label>
+              <input formControlName="tracking_number" type="text" placeholder="Ej. MPV-2026-000001"
+                     class="w-full h-11 px-space-md rounded bg-surface-container-low text-on-surface text-body-sm focus:outline-none focus:ring-2 focus:ring-secondary font-mono" />
+              @if (fieldInvalid('tracking_number')) {
+                <p class="text-body-sm text-error mt-1">Ingrese el n&#250;mero de seguimiento.</p>
+              }
+            </div>
+            <div>
+              <label class="block text-label-sm text-on-surface-variant mb-1 font-semibold">N&#170; Documento (DNI/RUC) *</label>
+              <input formControlName="document_number" type="text" placeholder="Ej. 45892147"
+                     class="w-full h-11 px-space-md rounded bg-surface-container-low text-on-surface text-body-sm focus:outline-none focus:ring-2 focus:ring-secondary" />
+              @if (fieldInvalid('document_number')) {
+                <p class="text-body-sm text-error mt-1">M&#237;nimo 8 caracteres.</p>
+              }
+            </div>
+          </div>
+
+          <button type="submit"
+                  [disabled]="consultando()"
+                  class="w-full sm:w-auto h-12 px-space-xl rounded bg-primary hover:bg-primary-container text-on-primary font-label-lg font-bold flex items-center justify-center gap-space-xs shadow-md transition-all disabled:opacity-50 cursor-pointer">
+            @if (consultando()) {
+              <span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span>
+              <span>Consultando...</span>
+            } @else {
+              <span class="material-symbols-outlined text-[20px]">search</span>
+              <span>Consultar Estado</span>
+            }
+          </button>
+        </form>
+
+        @if (error()) {
+          <div class="mt-space-md p-space-md rounded-lg bg-error/10 text-error flex items-center gap-space-sm">
+            <span class="material-symbols-outlined text-[20px]">error</span>
+            <span class="text-body-sm">{{ error() }}</span>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Resultado: Datos Generales + Timeline -->
+    @if (expediente()) {
+      <div class="space-y-space-lg">
+        <!-- Bot&#243;n volver -->
+        <button (click)="expediente.set(null)"
+                class="inline-flex items-center gap-space-xs text-secondary hover:text-primary font-label-lg text-label-lg transition-colors cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          <span>Nueva consulta</span>
+        </button>
+
+        <!-- Datos Generales -->
+        <div class="bg-surface-container-lowest rounded-xl shadow-md p-space-lg md:p-space-xl">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-space-md mb-space-lg">
+            <div>
+              <span class="text-label-sm text-on-surface-variant block mb-1">N&#170; de Seguimiento</span>
+              <span class="text-headline-lg text-secondary font-bold font-mono">{{ expediente()!.tracking_number }}</span>
+            </div>
+            <span class="px-space-md py-1 rounded-full text-label-sm font-bold self-start"
+                  [class]="statusColor(expediente()!.status)">
+              {{ expediente()!.status }}
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md text-body-sm">
+            <div>
+              <span class="text-label-sm text-on-surface-variant block">Tipo de Documento</span>
+              <span class="text-on-surface font-semibold">{{ expediente()!.document_type }}</span>
+            </div>
+            <div>
+              <span class="text-label-sm text-on-surface-variant block">Remitente</span>
+              <span class="text-on-surface font-semibold">{{ expediente()!.sender_name }}</span>
+            </div>
+            <div class="sm:col-span-2">
+              <span class="text-label-sm text-on-surface-variant block">Asunto</span>
+              <span class="text-on-surface font-semibold">{{ expediente()!.subject }}</span>
+            </div>
+            <div>
+              <span class="text-label-sm text-on-surface-variant block">Fecha de Ingreso</span>
+              <span class="text-on-surface font-semibold">{{ expediente()!.registered_at }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- L&#237;nea de Tiempo -->
+        <div class="bg-surface-container-lowest rounded-xl shadow-md p-space-lg md:p-space-xl">
+          <div class="flex items-center gap-space-sm mb-space-lg">
+            <span class="material-symbols-outlined text-secondary text-[24px]">timeline</span>
+            <h2 class="text-headline-md text-primary font-bold">Historial de Derivaciones</h2>
+          </div>
+
+          @if (expediente()!.movements.length === 0) {
+            <div class="text-center py-space-xl">
+              <span class="material-symbols-outlined text-[48px] text-outline block mb-space-sm">hourglass_empty</span>
+              <p class="text-body-md text-on-surface-variant">A&#250;n no hay derivaciones registradas para este expediente.</p>
+            </div>
+          } @else {
+            <div class="relative">
+              <!-- L&#237;nea vertical -->
+              <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-outline-variant"></div>
+
+              <div class="space-y-space-lg">
+                @for (mov of expediente()!.movements; track $index) {
+                  <div class="relative flex gap-space-md pl-10">
+                    <!-- Punto: verde si fue recepcionado, gris si no -->
+                    <div class="absolute left-2.5 top-1 w-3 h-3 rounded-full border-2 border-surface-container-lowest z-10"
+                         [class]="mov.is_received ? 'bg-success' : 'bg-warning'"></div>
+
+                    <!-- Contenido -->
+                    <div class="flex-1 bg-surface-container-low rounded-lg p-space-md">
+                      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-space-xs mb-space-xs">
+                        <span class="text-label-sm text-on-surface-variant">{{ mov.date }}</span>
+                        <div class="flex items-center gap-space-xs self-start">
+                          @if (mov.is_received) {
+                            <span class="px-space-sm py-0.5 rounded text-xs font-bold bg-success/10 text-success flex items-center gap-1">
+                              <span class="material-symbols-outlined text-[12px]">check_circle</span>
+                              Recepcionado
+                            </span>
+                          } @else {
+                            <span class="px-space-sm py-0.5 rounded text-xs font-bold bg-warning/10 text-warning">En tránsito</span>
+                          }
+                          <span class="px-space-sm py-0.5 rounded text-xs font-bold bg-secondary/10 text-secondary">{{ mov.action_requested }}</span>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-space-xs text-body-sm mb-space-xs">
+                        <span class="material-symbols-outlined text-[16px] text-outline">arrow_forward</span>
+                        <span class="text-on-surface">
+                          <strong class="font-semibold">{{ mov.from_area }}</strong>
+                          @if (mov.from_user && mov.from_user !== 'N/A') {
+                            <span class="text-on-surface-variant"> ({{ mov.from_user }})</span>
+                          }
+                          &#8594;
+                          <strong class="font-semibold text-primary">{{ mov.to_area }}</strong>
+                          @if (mov.to_user) {
+                            <span class="text-on-surface-variant"> &#8594; {{ mov.to_user }}</span>
+                          }
+                        </span>
+                      </div>
+                      @if (mov.received_at) {
+                        <p class="text-label-sm text-success mt-space-xs flex items-center gap-1">
+                          <span class="material-symbols-outlined text-[12px]">schedule</span>
+                          Recepcionado el {{ mov.received_at }}
+                        </p>
+                      }
+                      @if (mov.observations) {
+                        <p class="text-label-sm text-on-surface-variant mt-space-xs italic">"{{ mov.observations }}"</p>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</section>
