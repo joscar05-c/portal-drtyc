@@ -13,7 +13,7 @@ class RoleAndPermissionSeeder extends Seeder
     {
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        $resources = ['post', 'document', 'category', 'user', 'role', 'banner', 'staff_member', 'job_posting', 'job_call', 'quick_link', 'procedure', 'project', 'office', 'complaint', 'faq'];
+        $resources = ['post', 'document', 'category', 'user', 'role', 'banner', 'staff_member', 'job_posting', 'job_call', 'quick_link', 'procedure', 'project', 'office', 'complaint', 'faq', 'document_entry'];
 
         $permissions = [];
         foreach ($resources as $resource) {
@@ -42,6 +42,7 @@ class RoleAndPermissionSeeder extends Seeder
             'view_any_office', 'view_office', 'create_office', 'update_office', 'delete_office',
             'view_any_complaint', 'view_complaint', 'update_complaint', 'delete_complaint',
             'view_any_faq', 'view_faq', 'create_faq', 'update_faq', 'delete_faq',
+            'view_any_document_entry', 'view_document_entry', 'create_document_entry', 'update_document_entry', 'delete_document_entry',
         ]);
 
         $admin = User::firstOrCreate(
