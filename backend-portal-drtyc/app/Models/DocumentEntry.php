@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
@@ -27,6 +28,7 @@ class DocumentEntry extends Model
         'annexes_file_path',
         'status',
         'official_response',
+        'response_file_path',
     ];
 
     protected function casts(): array
@@ -62,5 +64,32 @@ class DocumentEntry extends Model
     public function movements(): HasMany
     {
         return $this->hasMany(DocumentMovement::class);
+    }
+
+    public function latestMovement(): HasOne
+    {
+        return $this->hasOne(DocumentMovement::class)->latestOfMany();
+    }
+
+    public function getCurrentLocationAttribute(): string
+    {
+        $movement = $this->latestMovement;
+
+        if (!$movement) {
+            return 'Sin derivar';
+        }
+
+        if (!$movement->is_received) {
+            $areaName = $movement->toArea->name ?? 'Área desconocida';
+            return 'Derivado a: ' . $areaName;
+        }
+
+        if ($movement->to_user_id) {
+            $userName = $movement->toUser->name ?? 'Usuario desconocido';
+            return 'En atención por: ' . $userName;
+        }
+
+        $areaName = $movement->toArea->name ?? 'Área desconocida';
+        return 'En bandeja de: ' . $areaName;
     }
 }
