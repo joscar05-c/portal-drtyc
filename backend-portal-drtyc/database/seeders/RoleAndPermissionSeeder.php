@@ -70,6 +70,28 @@ class RoleAndPermissionSeeder extends Seeder
             'view_area',
         ]);
 
+        $secretariaArea = Role::firstOrCreate(['name' => 'secretaria_area', 'guard_name' => 'web']);
+        $secretariaArea->givePermissionTo([
+            'view_any_document_entry',
+            'view_document_entry',
+            'update_document_entry',
+            'view_any_area',
+            'view_area',
+            'view_any_user',
+            'view_user',
+        ]);
+
+        $jefeArea = Role::firstOrCreate(['name' => 'jefe_area', 'guard_name' => 'web']);
+        $jefeArea->givePermissionTo([
+            'view_any_document_entry',
+            'view_document_entry',
+            'update_document_entry',
+            'view_any_area',
+            'view_area',
+            'view_any_user',
+            'view_user',
+        ]);
+
         Area::firstOrCreate(
             ['name' => 'Mesa de Partes'],
             ['description' => 'Área principal de recepción y trámite documentario', 'is_main_entry_point' => true]
