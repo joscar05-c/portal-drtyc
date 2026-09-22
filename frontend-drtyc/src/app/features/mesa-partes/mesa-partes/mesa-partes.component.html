@@ -27,11 +27,16 @@
         </p>
         <div class="bg-surface-container-low rounded-lg p-space-lg mb-space-lg inline-block">
           <span class="text-label-sm text-on-surface-variant block mb-1">N&#170; de Seguimiento</span>
-          <span class="text-headline-xl text-secondary font-bold font-mono">{{ trackingNumber() }}</span>
+          <span class="text-3xl font-bold font-mono text-secondary">{{ trackingNumber() }}</span>
         </div>
-        <p class="text-body-sm text-on-surface-variant">
-          Puede consultar el estado de su expediente en la secci&#243;n de seguimiento o contactar a la Mesa de Partes.
+        <p class="text-body-sm text-on-surface-variant mb-space-lg">
+          Se ha enviado un comprobante a su correo electr&#243;nico registrado con los datos de su tr&#225;mite.
         </p>
+        <a routerLink="/mesa-de-partes/seguimiento"
+           class="inline-flex items-center gap-space-sm h-12 px-space-xl rounded bg-primary hover:bg-primary-container text-on-primary font-label-lg font-bold shadow-md transition-all cursor-pointer">
+          <span class="material-symbols-outlined text-[20px]">search</span>
+          Hacer seguimiento a mi tr&#225;mite
+        </a>
       </div>
     }
 

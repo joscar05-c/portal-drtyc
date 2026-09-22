@@ -1,12 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { PortalService } from '../../../core/services/portal.service';
 
 @Component({
   selector: 'app-mesa-partes',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './mesa-partes.component.html',
 })
 export class MesaPartesComponent {
