@@ -9,7 +9,10 @@ class DocumentEntryPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['super_admin', 'admin', 'editor', 'mesa_de_partes', 'especialista']);
+        return $user->hasAnyRole([
+            'super_admin', 'admin', 'editor',
+            'mesa_de_partes', 'secretaria_area', 'jefe_area', 'especialista',
+        ]);
     }
 
     public function view(User $user, DocumentEntry $documentEntry): bool
@@ -22,9 +25,25 @@ class DocumentEntryPolicy
             return true;
         }
 
-        if ($user->hasRole('especialista')) {
+        if ($user->hasRole('secretaria_area')) {
             return $documentEntry->movements->contains(function ($movement) use ($user) {
                 return $movement->to_area_id === $user->area_id && !$movement->is_received;
+            }) || $documentEntry->movements->contains(function ($movement) use ($user) {
+                return $movement->from_user_id === $user->id;
+            });
+        }
+
+        if ($user->hasRole('jefe_area')) {
+            return $documentEntry->movements->contains(function ($movement) use ($user) {
+                return $movement->to_area_id === $user->area_id
+                    && $movement->is_received
+                    && is_null($movement->to_user_id);
+            });
+        }
+
+        if ($user->hasRole('especialista')) {
+            return $documentEntry->movements->contains(function ($movement) use ($user) {
+                return $movement->to_user_id === $user->id;
             });
         }
 
@@ -46,9 +65,23 @@ class DocumentEntryPolicy
             return true;
         }
 
-        if ($user->hasRole('especialista')) {
+        if ($user->hasRole('secretaria_area')) {
             return $documentEntry->movements->contains(function ($movement) use ($user) {
                 return $movement->to_area_id === $user->area_id && !$movement->is_received;
+            });
+        }
+
+        if ($user->hasRole('jefe_area')) {
+            return $documentEntry->movements->contains(function ($movement) use ($user) {
+                return $movement->to_area_id === $user->area_id
+                    && $movement->is_received
+                    && is_null($movement->to_user_id);
+            });
+        }
+
+        if ($user->hasRole('especialista')) {
+            return $documentEntry->movements->contains(function ($movement) use ($user) {
+                return $movement->to_user_id === $user->id && !$movement->is_received;
             });
         }
 
