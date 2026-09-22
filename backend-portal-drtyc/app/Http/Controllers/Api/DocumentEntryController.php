@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ExpedientSubmitted;
 use App\Models\Area;
 use App\Models\DocumentEntry;
 use App\Models\DocumentMovement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class DocumentEntryController extends Controller
 {
@@ -66,6 +68,10 @@ class DocumentEntryController extends Controller
             ]);
 
             $entry->update(['status' => 'En trámite']);
+        }
+
+        if ($entry->email) {
+            Mail::to($entry->email)->send(new ExpedientSubmitted($entry));
         }
 
         return response()->json([

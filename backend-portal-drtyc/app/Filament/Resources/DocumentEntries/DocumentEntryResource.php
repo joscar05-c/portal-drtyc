@@ -44,22 +44,43 @@ class DocumentEntryResource extends Resource
             return parent::getEloquentQuery();
         }
 
-        return parent::getEloquentQuery()
-            ->where(function ($query) use ($user) {
-                $query->whereHas('movements', function ($q) use ($user) {
-                    $q->where('to_area_id', $user->area_id)
-                        ->where('is_received', false);
-                })
-                ->orWhereHas('movements', function ($q) use ($user) {
-                    $q->where('to_user_id', $user->id)
-                        ->where('is_received', false);
+        if ($user->hasAnyRole(['mesa_de_partes', 'secretaria_area'])) {
+            return parent::getEloquentQuery()
+                ->where(function ($query) use ($user) {
+                    $query->whereHas('latestMovement', function ($q) use ($user) {
+                        $q->where('to_area_id', $user->area_id);
+                    })
+                    ->orWhereHas('movements', function ($q) use ($user) {
+                        $q->where('from_user_id', $user->id);
+                    });
                 });
-            });
+        }
+
+        if ($user->hasRole('jefe_area')) {
+            return parent::getEloquentQuery()
+                ->whereHas('latestMovement', function ($q) use ($user) {
+                    $q->where('to_area_id', $user->area_id)
+                        ->where('is_received', true)
+                        ->whereNull('to_user_id');
+                });
+        }
+
+        if ($user->hasRole('especialista')) {
+            return parent::getEloquentQuery()
+                ->whereHas('latestMovement', function ($q) use ($user) {
+                    $q->where('to_user_id', $user->id);
+                });
+        }
+
+        return parent::getEloquentQuery()->whereRaw('0 = 1');
     }
 
     public static function canAccess(): bool
     {
-        return auth()->user()->hasAnyRole(['super_admin', 'admin', 'editor', 'mesa_de_partes', 'especialista']);
+        return auth()->user()->hasAnyRole([
+            'super_admin', 'admin', 'editor',
+            'mesa_de_partes', 'secretaria_area', 'jefe_area', 'especialista',
+        ]);
     }
 
     public static function canCreate(): bool
@@ -69,12 +90,12 @@ class DocumentEntryResource extends Resource
 
     public static function canEdit($record): bool
     {
-        return auth()->user()->hasPermissionTo('update_document_entry');
+        return auth()->user()->hasAnyRole(['super_admin', 'admin', 'mesa_de_partes', 'secretaria_area', 'jefe_area']);
     }
 
     public static function canDelete($record): bool
     {
-        return auth()->user()->hasPermissionTo('delete_document_entry');
+        return auth()->user()->hasAnyRole(['super_admin', 'admin']);
     }
 
     public static function form(Schema $schema): Schema
@@ -212,7 +233,7 @@ class DocumentEntryResource extends Resource
                     ->searchable()
                     ->limit(40),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('Estado')
+                    ->label('Estado Global')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'Pendiente' => 'warning',
@@ -222,6 +243,11 @@ class DocumentEntryResource extends Resource
                         'Rechazado' => 'danger',
                         default => 'gray',
                     }),
+                Tables\Columns\TextColumn::make('current_location')
+                    ->label('Ubicación Actual')
+                    ->searchable()
+                    ->limit(40)
+                    ->tooltip(fn (DocumentEntry $record): string => $record->current_location),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Fecha Ingreso')
                     ->dateTime('d/m/Y H:i')
@@ -257,9 +283,10 @@ class DocumentEntryResource extends Resource
                     ]),
             ])
             ->actions([
+                Actions\ViewAction::make(),
+
                 Actions\EditAction::make(),
 
-                // Acción: Recepcionar (Cuaderno de Cargos digital)
                 Actions\Action::make('recepcionar')
                     ->label('Recepcionar')
                     ->icon('heroicon-o-check-circle')
@@ -273,7 +300,6 @@ class DocumentEntryResource extends Resource
 
                         $movement = DocumentMovement::where('document_entry_id', $record->id)
                             ->where('to_area_id', $user->area_id)
-                            ->where('from_user_id', '!=', $user->id)
                             ->where('is_received', false)
                             ->latest()
                             ->first();
@@ -289,14 +315,21 @@ class DocumentEntryResource extends Resource
                         $user = auth()->user();
                         if (!$user->area_id) return false;
 
-                        return DocumentMovement::where('document_entry_id', $record->id)
-                            ->where('to_area_id', $user->area_id)
-                            ->where('from_user_id', '!=', $user->id)
-                            ->where('is_received', false)
-                            ->exists();
+                        $latest = $record->latestMovement;
+                        if (!$latest) return false;
+                        if ($latest->to_area_id !== $user->area_id) return false;
+
+                        if ($user->hasRole('secretaria_area')) {
+                            return !$latest->is_received && is_null($latest->to_user_id);
+                        }
+
+                        if ($user->hasRole('especialista')) {
+                            return !$latest->is_received && $latest->to_user_id === $user->id;
+                        }
+
+                        return false;
                     }),
 
-                // Acción: Derivar / Asignar
                 Actions\Action::make('derivarAsignar')
                     ->label('Derivar / Asignar')
                     ->icon('heroicon-o-arrow-right-circle')
@@ -307,16 +340,42 @@ class DocumentEntryResource extends Resource
                     ->form([
                         Forms\Components\Select::make('tipo_envio')
                             ->label('Tipo de Envío')
-                            ->options([
-                                'area' => 'A otra Área',
-                                'especialista' => 'A un Especialista de mi Área',
-                            ])
+                            ->options(function () {
+                                $user = auth()->user();
+                                if ($user->hasRole('secretaria_area')) {
+                                    return ['area' => 'A otra Área'];
+                                }
+                                return [
+                                    'area' => 'A otra Área',
+                                    'especialista' => 'A un Especialista de mi Área',
+                                ];
+                            })
                             ->required()
                             ->live()
                             ->native(false),
                         Forms\Components\Select::make('to_area_id')
                             ->label('Área Destino')
-                            ->options(fn () => Area::pluck('name', 'id'))
+                            ->options(function () {
+                                $user = auth()->user();
+
+                                if ($user->hasAnyRole(['mesa_de_partes', 'secretaria_area'])) {
+                                    return Area::whereNull('parent_id')
+                                        ->where('id', '!=', $user->area_id)
+                                        ->pluck('name', 'id');
+                                }
+
+                                $parentAreas = Area::whereNull('parent_id')
+                                    ->where('id', '!=', $user->area_id)
+                                    ->pluck('name', 'id');
+
+                                $subAreas = Area::where('parent_id', $user->area_id)
+                                    ->pluck('name', 'id')
+                                    ->mapWithKeys(fn ($name, $id) => ['sub_' . $id => '└ ' . $name]);
+
+                                return $parentAreas->merge($subAreas);
+                            })
+                            ->searchable()
+                            ->preload()
                             ->required()
                             ->visible(fn (Get $get) => $get('tipo_envio') === 'area')
                             ->native(false),
@@ -327,6 +386,9 @@ class DocumentEntryResource extends Resource
                                 if (!$user->area_id) return [];
                                 return User::where('area_id', $user->area_id)
                                     ->where('id', '!=', $user->id)
+                                    ->whereHas('roles', function ($q) {
+                                        $q->where('name', 'especialista');
+                                    })
                                     ->pluck('name', 'id');
                             })
                             ->searchable()
@@ -355,9 +417,13 @@ class DocumentEntryResource extends Resource
                     ->action(function (DocumentEntry $record, array $data): void {
                         $user = auth()->user();
 
-                        $toAreaId = $data['tipo_envio'] === 'area'
-                            ? $data['to_area_id']
-                            : User::find($data['to_user_id'])?->area_id;
+                        if ($data['tipo_envio'] === 'area') {
+                            $toAreaId = str_starts_with($data['to_area_id'], 'sub_')
+                                ? (int) substr($data['to_area_id'], 4)
+                                : (int) $data['to_area_id'];
+                        } else {
+                            $toAreaId = User::find($data['to_user_id'])?->area_id;
+                        }
 
                         DocumentMovement::create([
                             'document_entry_id' => $record->id,
@@ -372,9 +438,97 @@ class DocumentEntryResource extends Resource
 
                         $record->update(['status' => 'En Proceso']);
                     })
-                    ->visible(fn (DocumentEntry $record): bool =>
-                        $record->status !== 'Atendido' && $record->status !== 'Rechazado'
-                    ),
+                    ->visible(function (DocumentEntry $record): bool {
+                        $user = auth()->user();
+
+                        if ($record->status === 'Atendido' || $record->status === 'Rechazado') {
+                            return false;
+                        }
+
+                        if ($user->hasAnyRole(['super_admin', 'admin'])) {
+                            return true;
+                        }
+
+                        $latest = $record->latestMovement;
+                        if (!$latest) return false;
+                        if ($latest->to_area_id !== $user->area_id) return false;
+
+                        if ($user->hasRole('secretaria_area')) {
+                            return $latest->is_received;
+                        }
+
+                        if ($user->hasRole('jefe_area')) {
+                            return $latest->is_received && is_null($latest->to_user_id);
+                        }
+
+                        return false;
+                    }),
+
+                Actions\Action::make('atender')
+                    ->label('Atender / Finalizar')
+                    ->icon('heroicon-o-document-check')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Atender Expediente')
+                    ->modalDescription('Registra la respuesta oficial al ciudadano y cierra el expediente.')
+                    ->modalSubmitActionLabel('Finalizar Expediente')
+                    ->form([
+                        Forms\Components\Select::make('status_final')
+                            ->label('Estado Final')
+                            ->options([
+                                'Atendido' => 'Atendido',
+                                'Archivado' => 'Archivado',
+                            ])
+                            ->required()
+                            ->default('Atendido')
+                            ->native(false),
+                        Forms\Components\Textarea::make('official_response')
+                            ->label('Respuesta Oficial')
+                            ->rows(5)
+                            ->required()
+                            ->placeholder('Respuesta que verá el ciudadano...')
+                            ->columnSpanFull(),
+                        Forms\Components\FileUpload::make('response_file_path')
+                            ->label('Archivo de Respuesta (PDF)')
+                            ->disk('public')
+                            ->directory('document-entries/responses')
+                            ->acceptedFileTypes(['application/pdf'])
+                            ->maxSize(10240)
+                            ->downloadable()
+                            ->previewable(),
+                    ])
+                    ->action(function (DocumentEntry $record, array $data): void {
+                        $record->update([
+                            'status' => $data['status_final'],
+                            'official_response' => $data['official_response'],
+                            'response_file_path' => $data['response_file_path'] ?? null,
+                        ]);
+                    })
+                    ->visible(function (DocumentEntry $record): bool {
+                        $user = auth()->user();
+
+                        if ($record->status === 'Atendido' || $record->status === 'Rechazado') {
+                            return false;
+                        }
+
+                        $latest = $record->latestMovement;
+                        if (!$latest) return false;
+                        if (!$latest->is_received) return false;
+
+                        if ($user->hasAnyRole(['super_admin', 'admin'])) {
+                            return true;
+                        }
+
+                        if ($user->hasRole('especialista')) {
+                            return $latest->to_user_id === $user->id;
+                        }
+
+                        if ($user->hasRole('jefe_area')) {
+                            return $latest->to_area_id === $user->area_id && is_null($latest->to_user_id);
+                        }
+
+                        return false;
+                    }),
 
                 Actions\DeleteAction::make(),
             ])
@@ -391,6 +545,7 @@ class DocumentEntryResource extends Resource
             'index' => Pages\ListDocumentEntries::route('/'),
             'create' => Pages\CreateDocumentEntry::route('/create'),
             'edit' => Pages\EditDocumentEntry::route('/{record}/edit'),
+            'view' => Pages\ViewDocumentEntry::route('/{record}'),
         ];
     }
 }
