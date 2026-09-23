@@ -1,96 +1,156 @@
-<nav class="bg-blue-800 border-blue-700 sticky top-0 z-50">
-  <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-    <a routerLink="/" class="flex items-center space-x-3" (click)="cerrarMenu()">
-      <img src="/img/LOGO DRTC-2026.png" alt="Logo DRTC" class="h-10 w-auto">
-      <div class="hidden sm:block">
-        <p class="text-sm font-semibold leading-tight text-white">DRTC</p>
-        <p class="text-xs text-blue-200 leading-tight">Dirección Regional de Transportes y Comunicaciones</p>
+<header
+  class="fixed top-0 left-0 w-full z-50 bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.06)]"
+>
+  <!-- Top Bar -->
+  <div class="bg-primary text-on-primary">
+    <div class="max-w-7xl mx-auto px-gutter flex items-center justify-between h-9">
+      <div class="flex items-center gap-space-md">
+        <span
+          class="font-label-sm text-label-sm text-surface-variant flex items-center gap-space-xs"
+          ><span class="material-symbols-outlined text-[15px]">account_balance</span><span class="hidden sm:inline">Dirección
+          Regional de Transportes y Comunicaciones</span><span class="sm:hidden">Dirección Regional de Transportes y Comunicaciones</span></span
+        >
       </div>
-    </a>
-
-    <div class="hidden md:block">
-      <ul class="flex flex-col font-medium mt-4 rounded-lg bg-blue-800 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
-        <li>
-          <a routerLink="/"
-             routerLinkActive="bg-blue-700"
-             [routerLinkActiveOptions]="{ exact: true }"
-             class="block py-2 px-3 text-white rounded-sm md:bg-transparent md:hover:text-blue-300 md:p-0">
-            Inicio
-          </a>
-        </li>
-        <li>
-          <a routerLink="/transparencia"
-             routerLinkActive="bg-blue-700"
-             class="block py-2 px-3 text-white rounded-sm md:bg-transparent md:hover:text-blue-300 md:p-0">
-            Transparencia
-          </a>
-        </li>
-        <li>
-          <a routerLink="/resoluciones"
-             routerLinkActive="bg-blue-700"
-             class="block py-2 px-3 text-white rounded-sm md:bg-transparent md:hover:text-blue-300 md:p-0">
-            Resoluciones
-          </a>
-        </li>
-        <li>
-          <a routerLink="/convocatorias"
-             routerLinkActive="bg-blue-700"
-             class="block py-2 px-3 text-white rounded-sm md:bg-transparent md:hover:text-blue-300 md:p-0">
-            Convocatorias
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    <button (click)="toggleMenu()"
+      <div class="flex items-center gap-space-md">
+        <div class="hidden sm:flex items-center gap-space-xs">
+          <button
+            class="h-6 px-space-xs text-on-primary hover:bg-primary-container rounded flex items-center justify-center font-label-sm text-label-sm"
+            title="Aumentar tama&#241;o del texto"
             type="button"
-            class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
-            [attr.aria-expanded]="menuAbierto()"
-            aria-label="Menú de navegación">
-      <span class="sr-only">Open main menu</span>
-      <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
-      </svg>
-    </button>
+          >
+            A+</button
+          ><button
+            class="h-6 px-space-xs text-on-primary hover:bg-primary-container rounded flex items-center justify-center font-label-sm text-label-sm"
+            title="Contraste accesible"
+            type="button"
+          >
+            <span class="material-symbols-outlined text-[15px]">contrast</span>
+          </button>
+        </div>
+        <a
+          class="bg-secondary hover:bg-on-secondary-fixed-variant text-on-secondary px-space-sm py-0.5 rounded font-label-sm text-label-sm tracking-wide transition-colors flex items-center gap-space-xs"
+          href="#"
+          ><span class="material-symbols-outlined text-[14px]">visibility</span><span class="hidden sm:inline">Portal de Transparencia Est&#225;ndar</span><span class="sm:hidden">Transparencia</span></a
+        >
+      </div>
+    </div>
   </div>
 
-  @if (menuAbierto()) {
-    <div class="md:hidden" id="navbar-default">
-      <ul class="flex flex-col font-medium p-4 mt-0 border-t border-blue-700 bg-blue-800">
-        <li>
-          <a routerLink="/"
-             routerLinkActive="bg-blue-700"
-             [routerLinkActiveOptions]="{ exact: true }"
-             (click)="cerrarMenu()"
-             class="block py-2 px-3 text-white rounded-sm hover:bg-blue-700 md:hover:bg-transparent md:border-0 md:hover:text-blue-300 md:p-0">
-            Inicio
-          </a>
-        </li>
-        <li>
-          <a routerLink="/transparencia"
-             routerLinkActive="bg-blue-700"
-             (click)="cerrarMenu()"
-             class="block py-2 px-3 text-white rounded-sm hover:bg-blue-700 md:hover:bg-transparent md:border-0 md:hover:text-blue-300 md:p-0">
-            Transparencia
-          </a>
-        </li>
-        <li>
-          <a routerLink="/resoluciones"
-             routerLinkActive="bg-blue-700"
-             (click)="cerrarMenu()"
-             class="block py-2 px-3 text-white rounded-sm hover:bg-blue-700 md:hover:bg-transparent md:border-0 md:hover:text-blue-300 md:p-0">
-            Resoluciones
-          </a>
-        </li>
-        <li>
-          <a routerLink="/convocatorias"
-             routerLinkActive="bg-blue-700"
-             (click)="cerrarMenu()"
-             class="block py-2 px-3 text-white rounded-sm hover:bg-blue-700 md:hover:bg-transparent md:border-0 md:hover:text-blue-300 md:p-0">
-            Convocatorias
-          </a>
-        </li>
-      </ul>
+  <!-- Middle Bar: Logo + actions -->
+  <div class="max-w-7xl mx-auto px-gutter h-16 lg:h-20 flex items-center justify-between">
+    <div class="flex items-center gap-space-md">
+      <img
+        alt="Logotipo DRTC Institucional"
+        class="h-8 lg:h-9 w-auto object-contain"
+        src="/img/LOGO DRTC-2026.png"
+      />
+      <div class="flex flex-col">
+        <span
+          class="font-headline-sm text-headline-sm text-primary tracking-tight leading-tight"
+          >DRTC</span
+        ><span class="hidden sm:inline font-label-sm text-label-sm text-on-surface-variant leading-none"
+          >Direcci&#243;n Regional de Transportes y Comunicaciones</span
+        ><span class="sm:hidden font-label-sm text-label-sm text-on-surface-variant leading-none"
+          >Direcci&#243;n Regional</span
+        >
+      </div>
     </div>
-  }
-</nav>
+    <!-- Mobile: perfil + hamburger, al borde derecho -->
+    <div class="flex items-center gap-space-xs lg:hidden">
+      <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center cursor-pointer">
+        <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+      </div>
+      <button (click)="menuAbierto.set(!menuAbierto())"
+              class="w-10 h-10 rounded-lg bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center transition-colors cursor-pointer">
+        <span class="material-symbols-outlined text-primary text-[22px]">menu</span>
+      </button>
+    </div>
+    <!-- Desktop: search + mesa + perfil -->
+    <div class="hidden lg:flex items-center gap-space-md">
+      <form class="flex items-center relative" (submit)="$event.preventDefault()">
+        <input
+          class="w-80 h-11 pl-space-md pr-12 rounded-lg bg-surface-container-low text-on-surface placeholder:text-on-surface-variant/70 font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
+          placeholder="Buscar tr&#225;mites, resoluciones, comunicados..."
+          type="search"
+        /><button
+          class="absolute right-1.5 w-8 h-8 rounded bg-primary text-on-primary flex items-center justify-center hover:bg-primary-container transition-colors"
+          title="Buscar"
+          type="submit"
+        >
+          <span class="material-symbols-outlined text-[18px]">search</span>
+        </button>
+      </form>
+      <a
+        routerLink="/mesa-de-partes"
+        class="h-11 px-space-lg rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center gap-space-xs transition-colors shadow-sm"
+        ><span class="material-symbols-outlined text-[18px]">mark_email_unread</span
+        ><span>Mesa de Partes Virtual</span></a
+      >
+      <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center cursor-pointer">
+        <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav: Desktop -->
+  <div class="bg-surface-container-lowest shadow-[0_1px_4px_rgba(0,0,0,0.03)] hidden lg:block">
+    <div class="max-w-7xl mx-auto px-gutter">
+      <nav class="flex items-center gap-space-xs py-1 h-12">
+        @for (item of navItems; track item.route) {
+          <a [routerLink]="item.route"
+             routerLinkActive="bg-primary-container text-on-primary"
+             [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+             class="px-space-md py-2 whitespace-nowrap transition-colors font-label-lg text-label-lg rounded-lg"
+             [class.bg-primary-container]="isExact(item.route)"
+             [class.text-on-primary]="isExact(item.route)"
+             [class.text-on-surface-variant]="!isActive(item.route)"
+             [class.hover:text-on-surface]="!isActive(item.route)">
+            {{ item.label }}
+          </a>
+        }
+      </nav>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile: overlay + slide-right panel -->
+@if (menuAbierto()) {
+  <div class="fixed inset-0 z-[60] lg:hidden" (click)="menuAbierto.set(false)">
+    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute right-0 top-0 h-full w-72 bg-surface-container-lowest shadow-2xl flex flex-col animate-slide-in"
+         (click)="$event.stopPropagation()">
+      <!-- Panel header -->
+      <div class="bg-primary px-space-lg py-space-lg flex items-center gap-space-md">
+        <img alt="DRTC" class="h-10 w-auto object-contain" src="/img/LOGO DRTC-2026.png" />
+        <div class="flex flex-col">
+          <span class="font-headline-sm text-headline-sm text-on-primary leading-tight">DRTC</span>
+          <span class="font-label-sm text-label-sm text-surface-variant leading-none">Gobierno Regional</span>
+        </div>
+      </div>
+      <!-- Nav links -->
+      <nav class="flex-1 overflow-y-auto py-space-sm">
+        @for (item of navItems; track item.route) {
+          <a [routerLink]="item.route"
+             (click)="menuAbierto.set(false)"
+             routerLinkActive="bg-primary-container text-on-primary"
+             [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+             class="mx-space-sm my-0.5 px-space-md py-3 flex items-center gap-space-sm transition-colors font-label-lg text-label-lg rounded-lg"
+             [class.bg-primary-container]="isExact(item.route)"
+             [class.text-on-primary]="isExact(item.route)"
+             [class.text-on-surface-variant]="!isActive(item.route)"
+             [class.hover:bg-surface-container]="!isActive(item.route)">
+            {{ item.label }}
+          </a>
+        }
+      </nav>
+      <!-- Panel footer -->
+      <div class="border-t border-outline-variant p-space-md">
+        <a routerLink="/mesa-de-partes" (click)="menuAbierto.set(false)"
+           class="w-full h-11 px-space-lg rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs transition-colors shadow-sm">
+          <span class="material-symbols-outlined text-[18px]">mark_email_unread</span>
+          <span>Mesa de Partes Virtual</span>
+        </a>
+      </div>
+    </div>
+  </div>
+}
